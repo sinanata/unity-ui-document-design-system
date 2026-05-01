@@ -1,0 +1,214 @@
+/* ============================================================================
+   ICONS
+   Vector icon system backed by SVGs in Resources/Textures/Icons/.
+   Each .ds-icon--<name> class binds the icon's background-image; the parent
+   element (.ds-icon-host or any control with .ds-btn--icon, .ds-tab, etc.)
+   drives the tint color via -unity-background-image-tint-color so the SAME
+   class supports passive / hover / active / disabled states automatically.
+
+   Usage on its own VisualElement (e.g., as a label-prefix glyph):
+     <ui:VisualElement class="ds-icon ds-icon--paw" />
+
+   Usage inside an icon button or tab (recommended):
+     <ui:Button class="ds-btn ds-btn--icon">
+       <ui:VisualElement class="ds-icon ds-icon--search" />
+     </ui:Button>
+
+   Color states inherit from the parent's pseudo-class — no additional rule
+   needed in the consumer screen. To override a single state, add a
+   stateful modifier (.ds-icon--accent, .ds-icon--danger, etc.).
+   ============================================================================ */
+
+/* ---------- Base ---------- */
+
+.ds-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    -unity-background-scale-mode: scale-to-fit;
+    /* Default tint = text-secondary (passive). Parent state overrides. */
+    -unity-background-image-tint-color: var(--color-text-secondary);
+    transition-property: -unity-background-image-tint-color;
+    transition-duration: var(--transition-fast);
+}
+
+/* ---------- Sizes ---------- */
+.ds-icon--xs { width: 12px; height: 12px; }
+.ds-icon--sm { width: 16px; height: 16px; }
+.ds-icon--md { width: 20px; height: 20px; }
+.ds-icon--lg { width: 24px; height: 24px; }
+.ds-icon--xl { width: 32px; height: 32px; }
+.ds-icon--xxl { width: 48px; height: 48px; }
+
+/* ---------- Tint variants (explicit) ---------- */
+.ds-icon--primary    { -unity-background-image-tint-color: var(--color-text-primary); }
+.ds-icon--secondary  { -unity-background-image-tint-color: var(--color-text-secondary); }
+.ds-icon--disabled   { -unity-background-image-tint-color: var(--color-text-disabled); }
+.ds-icon--accent     { -unity-background-image-tint-color: var(--color-primary); }
+.ds-icon--gold       { -unity-background-image-tint-color: var(--color-rarity-legendary); }
+.ds-icon--danger     { -unity-background-image-tint-color: var(--color-danger); }
+.ds-icon--warning    { -unity-background-image-tint-color: var(--color-warning); }
+.ds-icon--info       { -unity-background-image-tint-color: var(--color-secondary); }
+.ds-icon--on-accent  { -unity-background-image-tint-color: var(--color-text-on-accent); }
+.ds-icon--rarity-common    { -unity-background-image-tint-color: var(--color-rarity-common); }
+.ds-icon--rarity-rare      { -unity-background-image-tint-color: var(--color-rarity-rare); }
+.ds-icon--rarity-epic      { -unity-background-image-tint-color: var(--color-rarity-epic); }
+.ds-icon--rarity-legendary { -unity-background-image-tint-color: var(--color-rarity-legendary); }
+
+/* ---------- Parent-driven state inheritance ----------
+   When an icon sits inside a control (button / tab / nav-item) that exposes
+   :hover / :active / :disabled / .is-active, paint the icon to match. The
+   selectors target the icon directly so we don't have to repeat per-state
+   rules in every consumer. */
+
+/* Hover on a generic interactive parent */
+.ds-btn:hover .ds-icon,
+.ds-tab:hover .ds-icon,
+.ds-nav-item:hover .ds-icon,
+.ds-rail-item:hover .ds-icon,
+.ds-bottom-nav__item:hover .ds-icon,
+.ds-pagination__btn:hover .ds-icon,
+.ds-stepper__btn:hover .ds-icon {
+    -unity-background-image-tint-color: var(--color-text-primary);
+}
+
+/* Active state. Two flavours:
+   1. Filled-bg controls (.ds-tab, .ds-pagination__btn, .ds-view-toggle__btn,
+      .ds-bottom-nav__item — when active the tab is painted with primary
+      background) → on-accent ink for contrast.
+   2. Soft-bg controls (.ds-nav-item, .ds-rail-item — primary-soft fill,
+      primary-tinted icon) — those define their own per-class tint in
+      Navigation.uss; we don't add them to this list to avoid stomping. */
+.ds-tab.is-active .ds-icon,
+.ds-pagination__btn.is-active .ds-icon,
+.ds-view-toggle__btn.is-active .ds-icon {
+    -unity-background-image-tint-color: var(--color-text-on-accent);
+}
+
+/* .ds-bottom-nav__item.is-active uses primary tint on transparent fill
+   (no full-green background) — its __icon rule in Navigation.uss already
+   sets that, so we skip it here too. */
+
+/* Press feedback */
+.ds-btn:active .ds-icon,
+.ds-tab:active .ds-icon,
+.ds-nav-item:active .ds-icon,
+.ds-rail-item:active .ds-icon,
+.ds-bottom-nav__item:active .ds-icon,
+.ds-pagination__btn:active .ds-icon {
+    -unity-background-image-tint-color: var(--color-text-primary);
+}
+
+/* Disabled */
+.ds-btn:disabled .ds-icon,
+.ds-tab:disabled .ds-icon,
+.ds-nav-item:disabled .ds-icon,
+.ds-pagination__btn:disabled .ds-icon {
+    -unity-background-image-tint-color: var(--color-text-disabled);
+}
+
+/* Filled-button glyphs (primary / secondary / tertiary / danger backgrounds)
+   — the bg is colored, so the glyph must read in on-accent ink at rest, not
+   text-secondary. Hover/press selectors above don't override these because
+   a filled button's hover keeps the same on-accent ink. */
+.ds-btn--primary .ds-icon,
+.ds-btn--secondary .ds-icon,
+.ds-btn--tertiary .ds-icon,
+.ds-btn--danger .ds-icon {
+    -unity-background-image-tint-color: var(--color-text-on-accent);
+}
+
+/* The icon-button variant defaults to text-primary at rest so the glyph
+   stays legible against the surface-elev background. */
+.ds-btn--icon .ds-icon {
+    -unity-background-image-tint-color: var(--color-text-primary);
+}
+.ds-btn--icon:hover .ds-icon {
+    -unity-background-image-tint-color: var(--color-primary);
+}
+.ds-btn--icon.ds-btn--icon-danger .ds-icon {
+    -unity-background-image-tint-color: var(--color-danger);
+}
+
+/* ---------- Glyph map ---------------------------------------------------
+   One declaration per SVG file under Assets/Resources/Textures/Icons/.
+   Add a new file → add one line below. resource(...) is path-relative to
+   Resources/, no extension. SVGs import as Texture2D (svgType: 3). */
+
+/* Arrows */
+.ds-icon--arrow-up        { background-image: resource("Textures/Icons/arrow_up"); }
+.ds-icon--arrow-down      { background-image: resource("Textures/Icons/arrow_down"); }
+.ds-icon--arrow-left      { background-image: resource("Textures/Icons/arrow_left"); }
+.ds-icon--arrow-right     { background-image: resource("Textures/Icons/arrow_right"); }
+.ds-icon--chevron-up      { background-image: resource("Textures/Icons/chevron_up"); }
+.ds-icon--chevron-down    { background-image: resource("Textures/Icons/chevron_down"); }
+.ds-icon--chevron-left    { background-image: resource("Textures/Icons/chevron_left"); }
+.ds-icon--chevron-right   { background-image: resource("Textures/Icons/chevron_right"); }
+.ds-icon--sort-asc        { background-image: resource("Textures/Icons/sort_asc"); }
+.ds-icon--sort-desc       { background-image: resource("Textures/Icons/sort_desc"); }
+
+/* Status / feedback */
+.ds-icon--check           { background-image: resource("Textures/Icons/check"); }
+.ds-icon--close           { background-image: resource("Textures/Icons/close"); }
+.ds-icon--info            { background-image: resource("Textures/Icons/info"); }
+.ds-icon--error           { background-image: resource("Textures/Icons/error"); }
+.ds-icon--warning         { background-image: resource("Textures/Icons/warning"); }
+.ds-icon--help            { background-image: resource("Textures/Icons/help"); }
+.ds-icon--smile           { background-image: resource("Textures/Icons/smile"); }
+.ds-icon--frown           { background-image: resource("Textures/Icons/frown"); }
+
+/* Actions */
+.ds-icon--plus            { background-image: resource("Textures/Icons/plus"); }
+.ds-icon--edit            { background-image: resource("Textures/Icons/edit"); }
+.ds-icon--trash           { background-image: resource("Textures/Icons/trash"); }
+.ds-icon--share           { background-image: resource("Textures/Icons/share"); }
+.ds-icon--refresh         { background-image: resource("Textures/Icons/refresh"); }
+.ds-icon--sync            { background-image: resource("Textures/Icons/sync"); }
+.ds-icon--search          { background-image: resource("Textures/Icons/search"); }
+.ds-icon--filter          { background-image: resource("Textures/Icons/filter"); }
+.ds-icon--more-horizontal { background-image: resource("Textures/Icons/more_horizontal"); }
+.ds-icon--more-vertical   { background-image: resource("Textures/Icons/more_vertical"); }
+.ds-icon--menu            { background-image: resource("Textures/Icons/menu"); }
+.ds-icon--list            { background-image: resource("Textures/Icons/list"); }
+.ds-icon--lock            { background-image: resource("Textures/Icons/lock"); }
+.ds-icon--unlock          { background-image: resource("Textures/Icons/unlock"); }
+.ds-icon--eye             { background-image: resource("Textures/Icons/eye"); }
+.ds-icon--settings        { background-image: resource("Textures/Icons/settings"); }
+.ds-icon--bell            { background-image: resource("Textures/Icons/bell"); }
+.ds-icon--clock           { background-image: resource("Textures/Icons/clock"); }
+.ds-icon--calendar        { background-image: resource("Textures/Icons/calendar"); }
+.ds-icon--user            { background-image: resource("Textures/Icons/user"); }
+.ds-icon--home            { background-image: resource("Textures/Icons/home"); }
+.ds-icon--target          { background-image: resource("Textures/Icons/target"); }
+
+/* Game / cosmetics */
+.ds-icon--paw             { background-image: resource("Textures/Icons/paw"); }
+.ds-icon--shirt           { background-image: resource("Textures/Icons/shirt"); }
+.ds-icon--hats            { background-image: resource("Textures/Icons/hats"); }
+.ds-icon--store           { background-image: resource("Textures/Icons/store"); }
+.ds-icon--cart            { background-image: resource("Textures/Icons/cart"); }
+.ds-icon--bag             { background-image: resource("Textures/Icons/bag"); }
+.ds-icon--gift            { background-image: resource("Textures/Icons/gift"); }
+.ds-icon--heart           { background-image: resource("Textures/Icons/heart"); }
+.ds-icon--shield          { background-image: resource("Textures/Icons/shield"); }
+.ds-icon--sword           { background-image: resource("Textures/Icons/sword"); }
+.ds-icon--bolt            { background-image: resource("Textures/Icons/bolt"); }
+.ds-icon--fire            { background-image: resource("Textures/Icons/fire"); }
+.ds-icon--flame           { background-image: resource("Textures/Icons/flame"); }
+.ds-icon--sparkle         { background-image: resource("Textures/Icons/sparkle"); }
+.ds-icon--sun             { background-image: resource("Textures/Icons/sun"); }
+
+/* Nature / habitat */
+.ds-icon--leaf            { background-image: resource("Textures/Icons/leaf"); }
+.ds-icon--tree            { background-image: resource("Textures/Icons/tree"); }
+.ds-icon--mountain        { background-image: resource("Textures/Icons/mountain"); }
+.ds-icon--droplet         { background-image: resource("Textures/Icons/droplet"); }
+
+/* Voice / audio (SVG replacements for the legacy mic-icon / sound-icon /
+   speak-icon / nametag-icon PNGs — same callsites, new artwork tied to
+   the design system token palette). */
+.ds-icon--mic             { background-image: resource("Textures/Icons/mic"); }
+.ds-icon--sound           { background-image: resource("Textures/Icons/sound"); }
+.ds-icon--speak           { background-image: resource("Textures/Icons/speak"); }
+.ds-icon--nametag         { background-image: resource("Textures/Icons/nametag"); }

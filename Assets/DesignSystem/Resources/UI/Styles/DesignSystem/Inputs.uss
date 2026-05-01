@@ -1,0 +1,240 @@
+/* ============================================================================
+   INPUTS
+   Targets: <ui:TextField>, <ui:DropdownField>, <ui:Toggle>, etc.
+   Class on the field root: ds-input (or ds-search, ds-dropdown, ds-textarea)
+
+   Unity 6 runtime/editor theme paints any TextField inner whose background
+   we don't explicitly override with its own light fill. The inner element
+   carries SEVERAL class names depending on Unity version and field type:
+       .unity-text-input
+       .unity-text-field__input
+       .unity-base-text-field__input
+       .unity-base-field__input
+   We hit them all in a single selector list rather than guessing wrong.
+   ============================================================================ */
+
+/* ---------- Common field shell ---------- */
+.ds-input {
+    height: 40px;
+    margin: 0;
+}
+
+/* TextField visual box — match every class variant Unity 6 emits. */
+.ds-input .unity-text-input,
+.ds-input .unity-text-field__input,
+.ds-input .unity-base-text-field__input,
+.ds-input .unity-base-field__input {
+    background-color: var(--color-surface-elev);
+    color: var(--color-text-primary);
+    border-width: var(--border-thin);
+    border-color: var(--color-border);
+    border-radius: var(--radius-md);
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: var(--font-size-body-1);
+    transition-property: border-color, background-color;
+    transition-duration: var(--transition-fast);
+    -unity-text-align: middle-left;
+}
+
+.ds-input .unity-text-input:hover,
+.ds-input .unity-text-field__input:hover,
+.ds-input .unity-base-text-field__input:hover {
+    border-color: var(--color-border-strong);
+}
+
+.ds-input .unity-text-input:focus,
+.ds-input .unity-text-field__input:focus,
+.ds-input .unity-base-text-field__input:focus {
+    border-color: var(--color-primary);
+    background-color: var(--color-surface);
+}
+
+.ds-input.ds-input--active .unity-text-input,
+.ds-input.is-active .unity-text-input,
+.ds-input.is-active .unity-text-field__input {
+    border-color: var(--color-primary);
+    background-color: var(--color-surface);
+}
+
+.ds-input.ds-input--error .unity-text-input,
+.ds-input.ds-input--error .unity-text-field__input {
+    border-color: var(--color-danger);
+}
+
+.ds-input:disabled .unity-text-input,
+.ds-input.is-disabled .unity-text-input,
+.ds-input:disabled .unity-text-field__input {
+    background-color: var(--color-surface);
+    color: var(--color-text-disabled);
+    border-color: var(--color-border);
+}
+
+/* Placeholder color via Unity's hidden label.
+   Unity 6's TextField.textEdition.placeholder API creates a child element
+   with these classes; .ds-textarea + .ds-search pick them up too so the
+   placeholder color matches across every input variant. */
+.ds-input .unity-base-text-field__placeholder,
+.ds-input .unity-text-field__placeholder,
+.ds-textarea .unity-base-text-field__placeholder,
+.ds-textarea .unity-text-field__placeholder,
+.ds-search .unity-base-text-field__placeholder,
+.ds-search .unity-text-field__placeholder {
+    color: var(--color-text-disabled);
+}
+
+/* ---------- Search input variant (with leading icon slot) ---------- */
+.ds-search {
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--color-surface-elev);
+    border-width: var(--border-thin);
+    border-color: var(--color-border);
+    border-radius: var(--radius-md);
+    height: 40px;
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+    transition-property: border-color;
+    transition-duration: var(--transition-fast);
+}
+.ds-search:hover { border-color: var(--color-border-strong); }
+.ds-search.is-focused { border-color: var(--color-primary); }
+
+.ds-search__icon {
+    width: 18px;
+    height: 18px;
+    margin-right: var(--space-3); /* 12px — emoji/icon needs more breathing room than 8px */
+    flex-shrink: 0;
+    flex-grow: 0;
+    /* When the icon is rendered as a Label with emoji/text content, force
+       the glyph to render at a useful size and to center within the box.
+       Without these the glyph defaults to top-left at the inherited
+       body-1 font size and visually bumps into the field text. */
+    font-size: 14px;
+    -unity-text-align: middle-center;
+    -unity-background-image-tint-color: var(--color-text-secondary);
+}
+
+.ds-search__field {
+    flex-grow: 1;
+}
+/* Strip the inner TextField's box so it disappears INTO the .ds-search wrapper.
+   Multi-class selector covers all Unity 6 emitted class names. */
+.ds-search__field .unity-text-input,
+.ds-search__field .unity-text-field__input,
+.ds-search__field .unity-base-text-field__input,
+.ds-search__field .unity-base-field__input {
+    background-color: rgba(0,0,0,0);
+    border-width: 0;
+    border-color: rgba(0,0,0,0);
+    color: var(--color-text-primary);
+    padding: 0;
+}
+
+/* Trailing clear button slot */
+.ds-search__clear {
+    width: 16px;
+    height: 16px;
+    margin-left: var(--space-2);
+    -unity-background-image-tint-color: var(--color-text-secondary);
+}
+
+/* ---------- Dropdown ----------
+   DropdownField anatomy in Unity 6:
+     DropdownField  (.unity-popup-field, .unity-base-popup-field, .unity-base-field)
+       Label        (.unity-base-popup-field__label)        — the field label
+       VisualElement(.unity-base-popup-field__input)        — the visible box
+         TextElement(.unity-popup-field__text /
+                     .unity-base-popup-field__text)         — the selected value
+         VisualElement(.unity-base-popup-field__arrow)      — the ▼ chevron
+
+   The arrow is a child of the input box but its size and placement come
+   from Unity defaults — `padding-right` on the input is NOT respected by
+   the arrow, so without explicit margin the chevron sits flush to the
+   box edge. We size and inset it ourselves below. */
+.ds-dropdown {
+    height: 40px;
+}
+.ds-dropdown .unity-popup-field__input,
+.ds-dropdown .unity-base-popup-field__input,
+.ds-dropdown .unity-base-field__input {
+    background-color: var(--color-surface-elev);
+    border-width: var(--border-thin);
+    border-color: var(--color-border);
+    border-radius: var(--radius-md);
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+    color: var(--color-text-primary);
+    transition-property: border-color;
+    transition-duration: var(--transition-fast);
+}
+.ds-dropdown .unity-popup-field__input:hover,
+.ds-dropdown .unity-base-popup-field__input:hover {
+    border-color: var(--color-border-strong);
+}
+.ds-dropdown .unity-popup-field__input:focus,
+.ds-dropdown .unity-base-popup-field__input:focus {
+    border-color: var(--color-primary);
+}
+
+/* Selected-value text — match font, color, and vertical alignment of
+   the other inputs so a populated dropdown reads consistently. */
+.ds-dropdown .unity-popup-field__text,
+.ds-dropdown .unity-base-popup-field__text,
+.ds-dropdown .unity-text-element {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-body-1);
+    -unity-text-align: middle-left;
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+/* Chevron — explicit dimensions, color, and right-edge inset.
+   Without margin-right here the arrow sits flush to the box's right
+   border because Unity ignores parent padding for this child. */
+.ds-dropdown .unity-base-popup-field__arrow {
+    width: 12px;
+    height: 12px;
+    margin-left: var(--space-2);
+    margin-right: 0;
+    flex-shrink: 0;
+    flex-grow: 0;
+    -unity-background-image-tint-color: var(--color-text-secondary);
+}
+
+/* ---------- Textarea ---------- */
+.ds-textarea {
+    height: auto;
+    min-height: 96px;
+}
+.ds-textarea .unity-text-input,
+.ds-textarea .unity-text-field__input,
+.ds-textarea .unity-base-text-field__input,
+.ds-textarea .unity-base-field__input {
+    background-color: var(--color-surface-elev);
+    color: var(--color-text-primary);
+    border-width: var(--border-thin);
+    border-color: var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    font-size: var(--font-size-body-1);
+    -unity-text-align: upper-left;
+    white-space: normal;
+    min-height: 96px;
+}
+.ds-textarea .unity-text-input:focus,
+.ds-textarea .unity-text-field__input:focus,
+.ds-textarea .unity-base-text-field__input:focus {
+    border-color: var(--color-primary);
+}
+
+/* Counter row (e.g. "0/120") — wrap textarea + label in a parent set to .ds-textarea__wrap */
+.ds-textarea__wrap { flex-direction: column; }
+.ds-textarea__counter {
+    -unity-text-align: middle-right;
+    font-size: var(--font-size-caption);
+    color: var(--color-text-disabled);
+    margin-top: var(--space-1);
+}

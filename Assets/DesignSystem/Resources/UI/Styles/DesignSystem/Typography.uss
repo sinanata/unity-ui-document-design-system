@@ -1,0 +1,61 @@
+/* ============================================================================
+   TYPOGRAPHY
+   Utility classes mirroring the design system's text styles.
+   Apply alongside any element: <ui:Label class="ds-h1" .../>
+   ============================================================================ */
+
+.ds-h1 {
+    font-size: var(--font-size-h1);
+    -unity-font-style: bold;
+    color: var(--color-text-primary);
+    -unity-text-align: middle-left;
+}
+
+.ds-h2 {
+    font-size: var(--font-size-h2);
+    -unity-font-style: bold;
+    color: var(--color-text-primary);
+}
+
+.ds-h3 {
+    font-size: var(--font-size-h3);
+    -unity-font-style: bold; /* Semibold — UI Toolkit uses normal/bold; pair with a Semibold font asset for accuracy */
+    color: var(--color-text-primary);
+}
+
+.ds-body-1 {
+    font-size: var(--font-size-body-1);
+    -unity-font-style: normal;
+    color: var(--color-text-primary);
+}
+
+.ds-body-2 {
+    font-size: var(--font-size-body-2);
+    -unity-font-style: normal;
+    color: var(--color-text-secondary);
+}
+
+.ds-caption {
+    font-size: var(--font-size-caption);
+    -unity-font-style: bold; /* Medium — pair with a Medium font asset for fidelity */
+    color: var(--color-text-secondary);
+    letter-spacing: 0.5px;
+}
+
+/* Color modifiers */
+.ds-text-primary   { color: var(--color-text-primary); }
+.ds-text-secondary { color: var(--color-text-secondary); }
+.ds-text-disabled  { color: var(--color-text-disabled); }
+.ds-text-success   { color: var(--color-primary); }
+.ds-text-warning   { color: var(--color-warning); }
+.ds-text-danger    { color: var(--color-danger); }
+.ds-text-info      { color: var(--color-secondary); }
+
+/* Section labels (small caps style headers like "COLORS", "TYPOGRAPHY") */
+.ds-section-label {
+    font-size: var(--font-size-caption);
+    -unity-font-style: bold;
+    color: var(--color-text-secondary);
+    letter-spacing: 1px;
+    margin-bottom: var(--space-3);
+}

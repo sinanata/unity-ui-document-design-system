@@ -1,0 +1,22 @@
+# Unity-generated artefacts (in case someone clones this INTO a Unity project)
+Library/
+Temp/
+Obj/
+Logs/
+UserSettings/
+MemoryCaptures/
+Builds/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Editor junk
+.vscode/
+.idea/
+*.swp
+*~
+
+# Unity .meta files for the design system are intentionally NOT ignored —
+# they carry import settings (svgType, asmdef refs, etc.) that consumers
+# should reuse rather than regenerate.
