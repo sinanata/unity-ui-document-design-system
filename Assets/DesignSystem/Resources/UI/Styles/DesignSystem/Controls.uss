@@ -39,8 +39,11 @@
    Style hooks below target it by class. */
 .ds-toggle__knob {
     position: absolute;
-    top: 2px;
-    left: 2px;
+    /* Vertical inset = (track-height − knob-height) / 2
+       = (24 − 18) / 2 = 3px → exactly cross-centered. The previous
+       2px reading rendered the knob 1px above true center. */
+    top: 3px;
+    left: 3px;
     width: 18px;
     height: 18px;
     border-radius: var(--radius-pill-9); /* circle */
@@ -252,19 +255,35 @@
     margin-top: -9px;                      /* -height/2 → cross-centered */
 }
 
-/* ---------- Progress bar ---------- */
+/* ---------- Progress bar ----------
+   Unity 6's default theme gives the ProgressBar's outer wrapper a
+   `margin: 1px 3px;` (a vestige of inspector-row spacing) and the inner
+   `__background` a `flex-grow: 1; align-self: stretch;` that doesn't
+   account for that margin. The net effect is asymmetric ~3px gaps on
+   each side of the track. We zero margin/padding on every layer so the
+   pill fills the parent's full content width. */
 .ds-progress {
     height: 8px;
+    margin: 0;
+    padding: 0;
+}
+.ds-progress .unity-progress-bar__container {
+    margin: 0;
+    padding: 0;
+    flex-grow: 1;
 }
 .ds-progress .unity-progress-bar__background {
     background-color: var(--color-surface-elev);
     border-radius: var(--radius-pill-4); /* 8px tall → 4px */
     border-width: 0;
     height: 8px;
+    margin: 0;
+    padding: 0;
 }
 .ds-progress .unity-progress-bar__progress {
     background-color: var(--color-primary);
     border-radius: var(--radius-pill-4); /* same as track to keep a clean pill at any fill % */
+    margin: 0;
 }
 .ds-progress .unity-progress-bar__title {
     display: none;

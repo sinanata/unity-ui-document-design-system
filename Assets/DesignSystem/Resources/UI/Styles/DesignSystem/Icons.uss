@@ -108,15 +108,29 @@
     -unity-background-image-tint-color: var(--color-text-disabled);
 }
 
-/* Filled-button glyphs (primary / secondary / tertiary / danger backgrounds)
-   — the bg is colored, so the glyph must read in on-accent ink at rest, not
-   text-secondary. Hover/press selectors above don't override these because
-   a filled button's hover keeps the same on-accent ink. */
-.ds-btn--primary .ds-icon,
+/* Per-variant glyph tint — match the icon to the variant's text color so
+   a leading `.ds-btn__icon` reads as part of the same content stream as
+   the label. Splits by what the variant's `color:` actually resolves to:
+
+   .ds-btn--primary  → color: text-on-accent (dark ink on green) → icon dark
+   .ds-btn--secondary→ color: text-primary  (white on blue)      → icon white
+   .ds-btn--tertiary → color: text-primary  (white on purple)    → icon white
+   .ds-btn--ghost    → color: text-primary  (white on transparent)→ icon white
+   .ds-btn--danger   → color: text-primary  (white on red)       → icon white
+
+   Higher specificity than the global `.ds-btn:hover .ds-icon` rule (0,2,0
+   vs 0,2,0 — but declared after it so source order wins on hover too,
+   which is what we want: a Primary button keeps its dark icon on hover
+   because its text also stays dark). */
+.ds-btn--primary .ds-icon {
+    -unity-background-image-tint-color: var(--color-text-on-accent);
+}
+
 .ds-btn--secondary .ds-icon,
 .ds-btn--tertiary .ds-icon,
+.ds-btn--ghost .ds-icon,
 .ds-btn--danger .ds-icon {
-    -unity-background-image-tint-color: var(--color-text-on-accent);
+    -unity-background-image-tint-color: var(--color-text-primary);
 }
 
 /* The icon-button variant defaults to text-primary at rest so the glyph

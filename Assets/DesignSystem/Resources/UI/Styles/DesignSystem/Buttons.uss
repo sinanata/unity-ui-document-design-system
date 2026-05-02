@@ -159,3 +159,106 @@
 .ds-btn--sm { height: 28px; padding-left: var(--space-3); padding-right: var(--space-3); font-size: var(--font-size-body-2); }
 .ds-btn--lg { height: 44px; padding-left: var(--space-5); padding-right: var(--space-5); font-size: var(--font-size-h3); }
 .ds-btn--block { width: 100%; }
+
+/* ---------- Icon-with-text helper ----------
+   Pair a small leading icon with the button label by adding two children:
+
+       <ui:Button class="ds-btn ds-btn--primary ds-btn--with-icon">
+           <ui:VisualElement class="ds-icon ds-icon--check ds-btn__icon" />
+           <ui:Label text="Save" />
+       </ui:Button>
+
+   `.ds-btn--with-icon` flips the button to flex-row so the icon and label
+   sit side-by-side (Unity Button's default flex-direction is column, which
+   would stack them vertically). `.ds-btn__icon` shrinks the glyph to 14px
+   and adds 6px right margin so the text breathes. The icon inherits the
+   button's text color via the design-system tint cascade — primary →
+   on-accent dark ink, ghost → text-secondary, etc. */
+.ds-btn--with-icon {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.ds-btn__icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+/* Child Label inside an icon-with-text button — Unity's default Label
+   carries internal margin + a default `upper-left` text-anchor, which
+   makes the visible baseline sit below the icon's geometric center even
+   though `align-items: center` centers the Label's *box*. Zeroing the
+   margin and forcing `middle-center` puts the text on the same optical
+   line as the icon. The general `.ds-btn--with-icon > .unity-label`
+   selector also picks up `.back-btn__label` (which has its own rules
+   that override font weight / size — those still win on specificity). */
+.ds-btn--with-icon > .unity-label {
+    margin: 0;
+    padding: 0;
+    -unity-text-align: middle-center;
+}
+
+/* ---------- Back button ----------
+   Standardized "back to previous screen" affordance. Always renders as
+   primary green + leading chevron-left + "Back" label, regardless of
+   which variant class the UXML declares — same selector specificity
+   (0,1,0) as .ds-btn--ghost / --secondary / etc., but Buttons.uss
+   declares this AFTER those variants so source-order makes it win.
+
+   Author UXML as:
+       <ui:Button class="ds-btn back-btn" text="Back" />
+   then either rely on a screen base / framework to inject the chevron
+   icon + label children at runtime, or declare them inline:
+       <ui:Button class="ds-btn back-btn">
+           <ui:VisualElement class="ds-icon ds-icon--chevron-left back-btn__icon" />
+           <ui:Label class="back-btn__label" text="Back" />
+       </ui:Button> */
+.back-btn {
+    align-self: center;
+    margin-top: var(--space-6);
+    min-width: 110px;
+    height: 40px;
+    padding: 0 18px 0 14px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-text-on-accent);
+    border-width: var(--border-thin);
+    border-radius: var(--radius-md);
+}
+
+.back-btn:hover {
+    background-color: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+}
+
+.back-btn:active,
+.back-btn.ds-btn--pressed {
+    background-color: var(--color-primary-press);
+    border-color: var(--color-primary-press);
+    scale: 0.97 0.97;
+}
+
+.back-btn__icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    margin-right: 6px;
+    -unity-background-image-tint-color: var(--color-text-on-accent);
+}
+
+.back-btn__label {
+    color: var(--color-text-on-accent);
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+    font-size: var(--font-size-body-1);
+    margin: 0;
+    padding: 0;
+}

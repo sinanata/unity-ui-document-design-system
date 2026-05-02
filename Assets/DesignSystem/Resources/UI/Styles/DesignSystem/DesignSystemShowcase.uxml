@@ -144,24 +144,62 @@
                         <ui:VisualElement class="ds-icon ds-icon--trash"/>
                     </ui:Button>
                 </ui:VisualElement>
+                <ui:VisualElement class="ds-row" style="margin-top: 12px;">
+                    <ui:Label text="With Icon" class="ds-body-2" style="width: 70px;"/>
+                    <ui:Button class="ds-btn ds-btn--primary ds-btn--with-icon" style="margin-right: 6px;">
+                        <ui:VisualElement class="ds-icon ds-icon--check ds-btn__icon"/>
+                        <ui:Label text="Save"/>
+                    </ui:Button>
+                    <ui:Button class="ds-btn ds-btn--secondary ds-btn--with-icon" style="margin-right: 6px;">
+                        <ui:VisualElement class="ds-icon ds-icon--share ds-btn__icon"/>
+                        <ui:Label text="Share"/>
+                    </ui:Button>
+                    <ui:Button class="ds-btn ds-btn--tertiary ds-btn--with-icon" style="margin-right: 6px;">
+                        <ui:VisualElement class="ds-icon ds-icon--sparkle ds-btn__icon"/>
+                        <ui:Label text="Discover"/>
+                    </ui:Button>
+                </ui:VisualElement>
+                <ui:VisualElement class="ds-row">
+                    <ui:Label text="" class="ds-body-2" style="width: 70px;"/>
+                    <ui:Button class="ds-btn ds-btn--ghost ds-btn--with-icon" style="margin-right: 6px;">
+                        <ui:VisualElement class="ds-icon ds-icon--filter ds-btn__icon"/>
+                        <ui:Label text="Filter"/>
+                    </ui:Button>
+                    <ui:Button class="ds-btn ds-btn--danger ds-btn--with-icon" style="margin-right: 6px;">
+                        <ui:VisualElement class="ds-icon ds-icon--trash ds-btn__icon"/>
+                        <ui:Label text="Delete"/>
+                    </ui:Button>
+                </ui:VisualElement>
+                <ui:VisualElement class="ds-row" style="margin-top: 12px;">
+                    <ui:Label text="Back" class="ds-body-2" style="width: 70px;"/>
+                    <ui:Button class="ds-btn back-btn" style="align-self: flex-start; margin-top: 0;">
+                        <ui:VisualElement class="ds-icon ds-icon--chevron-left back-btn__icon"/>
+                        <ui:Label text="Back" class="back-btn__label"/>
+                    </ui:Button>
+                </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement class="ds-section" style="width: 280px;">
                 <ui:Label text="INPUTS" class="ds-section__title"/>
+                <!-- Inputs render with `value` attribute showing example
+                     content rather than absolute-positioned placeholder
+                     Labels — Unity Label's intrinsic top margin made the
+                     fake placeholders sit a few px below the input's
+                     real text baseline. The field's own internal text
+                     rendering is correctly centered (input) or top-
+                     padded (textarea) by the .ds-input / .ds-textarea
+                     rules in Inputs.uss. Real placeholder text in your
+                     screens should use Unity 6's
+                     `field.textEdition.placeholder = ...` API. -->
                 <ui:VisualElement class="ds-search" style="margin-bottom: 8px;">
                     <ui:VisualElement class="ds-icon ds-icon--sm ds-icon--search ds-search__icon"/>
-                    <ui:TextField picking-mode="Position" class="ds-search__field"/>
-                    <ui:Label text="Search animals..." class="ds-body-1" style="position: absolute; left: 38px; color: rgb(103, 112, 133);"/>
+                    <ui:TextField value="Frog" class="ds-search__field"/>
                 </ui:VisualElement>
-                <ui:TextField class="ds-input" style="margin-bottom: 8px;">
-                    <ui:Label text="Enter name..." picking-mode="Ignore" style="position: absolute; left: 12px; top: 11px; color: rgb(103, 112, 133); font-size: 14px;"/>
-                </ui:TextField>
-                <ui:DropdownField choices="Common,Rare,Epic,Legendary" label="" class="ds-dropdown" style="margin-bottom: 8px;"/>
+                <ui:TextField value="Sinan Ata" class="ds-input" style="margin-bottom: 8px;"/>
+                <ui:DropdownField choices="Common,Rare,Epic,Legendary" index="0" label="" class="ds-dropdown" style="margin-bottom: 8px;"/>
                 <ui:Label text="Active input" class="ds-body-2" style="margin-top: 4px; margin-bottom: 4px;"/>
                 <ui:TextField value="Typing..." class="ds-input is-active" style="margin-bottom: 8px;"/>
                 <ui:VisualElement class="ds-textarea__wrap">
-                    <ui:TextField multiline="true" class="ds-textarea">
-                        <ui:Label text="Textarea / Notes..." picking-mode="Ignore" style="position: absolute; left: 12px; top: 12px; color: rgb(103, 112, 133); font-size: 14px;"/>
-                    </ui:TextField>
+                    <ui:TextField multiline="true" value="Multi-line notes about the selected animal go here. Wraps automatically once the text reaches the right edge of the field." class="ds-textarea"/>
                     <ui:Label text="0/120" class="ds-textarea__counter"/>
                 </ui:VisualElement>
             </ui:VisualElement>
@@ -173,7 +211,7 @@
                     <ui:Button text="Rare" class="ds-tab"/>
                     <ui:Button text="Epic" class="ds-tab"/>
                 </ui:VisualElement>
-                <ui:DropdownField choices="Rarity,Newest,Name (A-Z),Name (Z-A)" value="Rarity" class="ds-dropdown" style="margin-bottom: 12px;"/>
+                <ui:DropdownField choices="Rarity,Newest,Name (A-Z),Name (Z-A)" index="0" class="ds-dropdown" style="margin-bottom: 12px;"/>
                 <ui:VisualElement class="ds-row" style="margin-bottom: 12px;">
                     <ui:Button class="ds-btn ds-btn--icon" style="margin-right: 4px; border-color: rgb(34, 197, 94);">
                         <ui:VisualElement class="ds-icon ds-icon--leaf ds-icon--accent"/>
@@ -196,7 +234,7 @@
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-row" style="margin-bottom: 12px;">
                     <ui:Label text="Sort by:" class="ds-body-2" style="margin-right: 8px;"/>
-                    <ui:DropdownField choices="Newest,Oldest" value="Newest" class="ds-dropdown" style="flex-grow: 1;"/>
+                    <ui:DropdownField choices="Newest,Oldest" index="0" class="ds-dropdown" style="flex-grow: 1;"/>
                 </ui:VisualElement>
                 <ui:Label text="VIEW" class="ds-section__title"/>
                 <ui:VisualElement class="ds-view-toggle">
@@ -268,7 +306,7 @@
                         <ui:VisualElement class="ds-animal-detail__header-row">
                             <ui:Label text="COMMON" class="ds-badge ds-badge--common"/>
                             <ui:VisualElement class="ds-chip ds-chip--equipped">
-                                <ui:VisualElement class="ds-icon ds-icon--xs ds-icon--check"/>
+                                <ui:VisualElement class="ds-icon ds-icon--xs ds-icon--check ds-chip__icon"/>
                                 <ui:Label text="Equipped"/>
                             </ui:VisualElement>
                         </ui:VisualElement>
@@ -636,7 +674,7 @@
             </ui:VisualElement>
             <ui:VisualElement class="ds-section" style="width: 280px;">
                 <ui:Label text="SLIDERS" class="ds-section__title"/>
-                <ui:VisualElement class="ds-progress-row" style="margin-bottom: 12px;">
+                <ui:VisualElement class="ds-progress-row" style="margin-bottom: 24px;">
                     <ui:VisualElement class="ds-progress-row__head">
                         <ui:Label text="Progress" class="ds-body-2"/>
                         <ui:Label text="68%" class="ds-body-2 ds-text-primary"/>
