@@ -118,18 +118,34 @@
    .ds-btn--ghost    → color: text-primary  (white on transparent)→ icon white
    .ds-btn--danger   → color: text-primary  (white on red)       → icon white
 
-   Higher specificity than the global `.ds-btn:hover .ds-icon` rule (0,2,0
-   vs 0,2,0 — but declared after it so source order wins on hover too,
-   which is what we want: a Primary button keeps its dark icon on hover
-   because its text also stays dark). */
-.ds-btn--primary .ds-icon {
+   Each variant must also list `:hover` and `:active` selectors. The global
+   `.ds-btn:hover .ds-icon` / `.ds-btn:active .ds-icon` rules above are
+   (0,3,0) — pseudo-classes count as classes — so a bare `.ds-btn--primary
+   .ds-icon` (0,2,0) actually LOSES the cascade on hover and the icon
+   would flash to text-primary white over the green Primary background.
+   Adding `.ds-btn--primary:hover .ds-icon` (0,3,0) ties the global rule
+   on specificity; declaring it AFTER the global rule lets source order
+   pick the variant tint, so a Primary button keeps its dark glyph on
+   every interactive state and the dark "Back" label never disagrees with
+   the chevron next to it. */
+.ds-btn--primary .ds-icon,
+.ds-btn--primary:hover .ds-icon,
+.ds-btn--primary:active .ds-icon {
     -unity-background-image-tint-color: var(--color-text-on-accent);
 }
 
 .ds-btn--secondary .ds-icon,
+.ds-btn--secondary:hover .ds-icon,
+.ds-btn--secondary:active .ds-icon,
 .ds-btn--tertiary .ds-icon,
+.ds-btn--tertiary:hover .ds-icon,
+.ds-btn--tertiary:active .ds-icon,
 .ds-btn--ghost .ds-icon,
-.ds-btn--danger .ds-icon {
+.ds-btn--ghost:hover .ds-icon,
+.ds-btn--ghost:active .ds-icon,
+.ds-btn--danger .ds-icon,
+.ds-btn--danger:hover .ds-icon,
+.ds-btn--danger:active .ds-icon {
     -unity-background-image-tint-color: var(--color-text-primary);
 }
 

@@ -202,6 +202,19 @@
     -unity-text-align: middle-center;
 }
 
+/* Disabled label color — when the button enters :disabled, the parent's
+   own `color:` flips to text-disabled (each variant's `--<v>:disabled`
+   rule sets it). A child Label normally inherits that color, BUT a host
+   stylesheet can declare a global `.unity-label { color: ... }` that
+   blocks inheritance and pins the label to a literal token (LoL's
+   GameTheme.uss does this). Setting the disabled color here at (0,3,0)
+   wins over both `.unity-label` (0,1,0) and the base
+   `.ds-btn--with-icon > .unity-label` (0,2,0), so disabled buttons grey
+   their label even when the host is fighting the cascade. */
+.ds-btn--with-icon:disabled > .unity-label {
+    color: var(--color-text-disabled);
+}
+
 /* ---------- Back button ----------
    Standardized "back to previous screen" affordance. Always renders as
    primary green + leading chevron-left + "Back" label, regardless of
@@ -245,7 +258,24 @@
     scale: 0.97 0.97;
 }
 
-.back-btn__icon {
+/* Scoped under `.back-btn` so the selectors carry (0,2,0) specificity.
+   Two losing battles get won this way:
+
+   1. `.unity-label { color: text-primary }` — host games may apply a global
+      "default Label color" override (e.g. LoL's GameTheme.uss). Without the
+      extra class on the selector, source-order pushes that rule past
+      `.back-btn__label` and the label renders white instead of dark ink.
+
+   2. `.ds-btn--<variant> .ds-icon` — the per-variant icon-tint cascade
+      (Primary → on-accent, Ghost/Secondary/Tertiary/Danger → text-primary)
+      is also (0,2,0). When a UXML `.back-btn` carries a non-primary variant
+      class (e.g. legacy `ds-btn--ghost`), that variant rule would otherwise
+      beat the bare `.back-btn__icon` selector and tint the chevron white,
+      mismatching the dark "Back" label. The `.back-btn` host now wins on
+      source order at equal specificity. */
+.back-btn .back-btn__icon,
+.back-btn:hover .back-btn__icon,
+.back-btn:active .back-btn__icon {
     width: 14px;
     height: 14px;
     flex-shrink: 0;
@@ -254,11 +284,19 @@
     -unity-background-image-tint-color: var(--color-text-on-accent);
 }
 
-.back-btn__label {
+.back-btn .back-btn__label {
     color: var(--color-text-on-accent);
     -unity-text-align: middle-center;
     -unity-font-style: bold;
     font-size: var(--font-size-body-1);
     margin: 0;
     padding: 0;
+}
+
+/* Disabled state — match the icon's `.ds-btn:disabled .ds-icon` greying
+   so a disabled back button reads as fully disabled (gray label + gray
+   chevron). Specificity (0,3,0) beats both `.back-btn .back-btn__label`
+   (0,2,0) and any host-level `.unity-label { color: ... }` (0,1,0). */
+.back-btn:disabled .back-btn__label {
+    color: var(--color-text-disabled);
 }
