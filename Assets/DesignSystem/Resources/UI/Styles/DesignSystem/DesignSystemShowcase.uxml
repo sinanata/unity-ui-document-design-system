@@ -299,7 +299,7 @@
                 <ui:VisualElement style="flex-direction: row;">
                     <ui:VisualElement class="ds-animal-card is-selected" style="margin-right: 12px;">
                         <ui:VisualElement class="ds-animal-card__image">
-                            <ui:Label text="🐸" style="font-size: 64px;"/>
+                            <ui:VisualElement class="ds-icon ds-icon--paw ds-icon--rarity-common" style="width: 64px; height: 64px;"/>
                         </ui:VisualElement>
                         <ui:VisualElement class="ds-animal-card__rarity">
                             <ui:Label text="COMMON" class="ds-badge ds-badge--common"/>
@@ -317,7 +317,7 @@
                     </ui:VisualElement>
                     <ui:VisualElement class="ds-animal-card is-epic">
                         <ui:VisualElement class="ds-animal-card__image">
-                            <ui:Label text="🐊" style="font-size: 64px;"/>
+                            <ui:VisualElement class="ds-icon ds-icon--paw ds-icon--rarity-epic" style="width: 64px; height: 64px;"/>
                         </ui:VisualElement>
                         <ui:VisualElement class="ds-animal-card__rarity">
                             <ui:Label text="EPIC" class="ds-badge ds-badge--epic"/>
@@ -335,7 +335,7 @@
                 <ui:Label text="ANIMAL DETAIL PAGE (EXAMPLE)" class="ds-section__title"/>
                 <ui:VisualElement class="ds-animal-detail">
                     <ui:VisualElement class="ds-animal-detail__hero">
-                        <ui:Label text="🐸" style="font-size: 96px;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--paw ds-icon--rarity-common" style="width: 96px; height: 96px;"/>
                         <ui:Button class="ds-btn ds-btn--icon ds-animal-detail__hero-back">
                             <ui:VisualElement class="ds-icon ds-icon--arrow-left"/>
                         </ui:Button>
@@ -814,7 +814,7 @@
                             </ui:Button>
                         </ui:VisualElement>
                         <ui:VisualElement class="ds-modal__illustration">
-                            <ui:Label text="🐸" style="font-size: 48px;"/>
+                            <ui:VisualElement class="ds-icon ds-icon--xxl ds-icon--paw ds-icon--rarity-common"/>
                         </ui:VisualElement>
                         <ui:Label text="You have reached the maximum number of animals." class="ds-body-2" style="-unity-text-align: middle-center; white-space: normal; margin-bottom: 12px;"/>
                         <ui:Button text="Upgrade" class="ds-btn ds-btn--primary ds-btn--block"/>

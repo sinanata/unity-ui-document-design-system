@@ -17,6 +17,22 @@
     flex-grow: 1;
 }
 
+/* ── Section gutters ──
+   Desktop margin is 8px per side; on a 390px-wide iPhone that pushes a
+   `max-width: 100%` section past the parent's inner content area by 16px.
+   Halve to 4px so each section + margins fits the viewport. */
+.mobile .ds-section {
+    margin: var(--space-1);
+}
+
+/* ── Row reflow ──
+   .ds-row defaults to a single non-wrapping row. On mobile, button rows can
+   exceed the section's narrowed content width; let them wrap to a new line
+   instead of overflowing horizontally. */
+.mobile .ds-row {
+    flex-wrap: wrap;
+}
+
 /* ── Typography ──
    Bump body sizes one step on mobile so the small reference resolution
    still gives readable text. */
@@ -253,6 +269,12 @@
     width: 88%;
     max-width: 320px;
     padding: var(--space-4);
+}
+/* Animal detail card defaults to width: 360px from Cards.uss; on mobile let
+   it shrink to its parent (clamped at 360px so it doesn't grow on tablet). */
+.mobile .ds-animal-detail {
+    width: 100%;
+    max-width: 360px;
 }
 .mobile .ds-modal__title,
 .mobile .ds-dialog__title {

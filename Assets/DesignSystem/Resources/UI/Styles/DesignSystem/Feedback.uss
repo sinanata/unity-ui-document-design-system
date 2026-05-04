@@ -158,6 +158,12 @@
     border-radius: var(--radius-lg);
     padding: var(--space-4);
     margin: var(--space-2);
+    /* Inline `style="width: Xpx"` on showcase sections still wins for the
+       desktop fixed-pixel layout, but `max-width` constrains it so narrower
+       viewports (iPhone ~390px) shrink the section instead of overflowing
+       horizontally. `width` and `max-width` are different properties — the
+       inline one wins specificity, this one wins constraint. */
+    max-width: 100%;
 }
 
 .ds-section__title {
