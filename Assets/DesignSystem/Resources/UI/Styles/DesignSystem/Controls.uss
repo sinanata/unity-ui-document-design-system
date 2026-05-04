@@ -262,8 +262,17 @@
    account for that margin. The net effect is asymmetric ~3px gaps on
    each side of the track. We zero margin/padding on every layer so the
    pill fills the parent's full content width. */
+/* Unity's stock `.unity-progress-bar` ships with `min-height: 21px`, so the
+   layout reserves 21px of vertical space even when we set `height: 8px` —
+   the bar renders at 8px but its parent row reserves ~13px more, pushing
+   content below further than expected. Setting `min-height: 0` plus a
+   hard `max-height` on every layer of the compound element collapses the
+   reserved space to match the visible bar. `__container` and
+   `__background` inherit the same Unity defaults and need the same fix. */
 .ds-progress {
     height: 8px;
+    min-height: 0;
+    max-height: 8px;
     margin: 0;
     padding: 0;
 }
@@ -271,12 +280,17 @@
     margin: 0;
     padding: 0;
     flex-grow: 1;
+    height: 8px;
+    min-height: 0;
+    max-height: 8px;
 }
 .ds-progress .unity-progress-bar__background {
     background-color: var(--color-surface-elev);
     border-radius: var(--radius-pill-4); /* 8px tall → 4px */
     border-width: 0;
     height: 8px;
+    min-height: 0;
+    max-height: 8px;
     margin: 0;
     padding: 0;
 }
@@ -297,4 +311,61 @@
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: var(--space-2);
+}
+
+/* ---------- Scrollbars ----------
+   Slim 8px scrollbar with a pill thumb, no arrow buttons. Scoped to
+   `.ds-root` so the rules don't leak into editor tools or other UI
+   Toolkit panels in the project. The thumb uses `--color-border-strong`
+   so it auto-themes — visible on both dark and light surfaces — and
+   brightens to `--color-text-secondary` on hover. */
+
+.ds-root .unity-scroller__low-button,
+.ds-root .unity-scroller__high-button {
+    display: none;
+}
+
+.ds-root .unity-scroll-view__vertical-scroller {
+    width: 8px;
+    margin-left: 2px;
+}
+.ds-root .unity-scroll-view__horizontal-scroller {
+    height: 8px;
+    margin-top: 2px;
+}
+
+.ds-root .unity-scroll-view__vertical-scroller .unity-base-slider {
+    width: 8px;
+    margin: 0;
+}
+.ds-root .unity-scroll-view__horizontal-scroller .unity-base-slider {
+    height: 8px;
+    margin: 0;
+}
+
+/* Track — invisible. The thumb floats on the page surface itself. */
+.ds-root .unity-base-slider__tracker {
+    background-color: transparent;
+    border-width: 0;
+}
+
+/* Thumb — pill-shaped, themed via tokens so light/dark both look right. */
+.ds-root .unity-base-slider__dragger {
+    background-color: var(--color-border-strong);
+    border-width: 0;
+    border-radius: 4px;
+    margin: 0;
+    transition-property: background-color;
+    transition-duration: var(--transition-fast);
+}
+.ds-root .unity-scroll-view__vertical-scroller .unity-base-slider__dragger {
+    width: 8px;
+    left: 0;
+}
+.ds-root .unity-scroll-view__horizontal-scroller .unity-base-slider__dragger {
+    height: 8px;
+    top: 0;
+}
+.ds-root .unity-base-slider__dragger:hover {
+    background-color: var(--color-text-secondary);
 }

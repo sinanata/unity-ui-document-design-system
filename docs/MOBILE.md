@@ -103,7 +103,7 @@ Don't put `.mobile` rules in the component's own file. Keeping them centralised 
 
 ## Testing
 
-Two ways to render the mobile tier in the editor:
+Three ways to render the mobile tier:
 
 ### A. Hard-code the class on the showcase
 
@@ -127,7 +127,19 @@ Root.AddToClassList("mobile");
 
 Comment out before merging.
 
-A future contribution that ships as part of this repo: a Unity menu item under `Tools/Design System/Toggle Mobile` that flips the class on the active UIDocument's root. PRs welcome.
+### C. Build the WebGL showcase + Chrome device emulation
+
+The most reliable way to verify the mobile flip *before* shipping a real mobile build. From the repo root:
+
+```powershell
+.\Tools\Build\Build-Showcase.ps1 -Serve
+```
+
+Builds the showcase to `build/WebGL/` and serves it at `http://localhost:3000`. Open Chrome DevTools' **Toggle device toolbar** (`Ctrl+Shift+M`) and pick a phone profile. The `ShowcaseBootstrap` calls `Screen.width < 768 → AddToClassList("mobile")` on first frame, so dropping below 768 px triggers the same flip a real phone would.
+
+The showcase build also exercises the styled scrollbar at narrow widths and the day / night theme toggle — useful to verify cross-cutting concerns at the same time.
+
+A future contribution that ships as part of this repo: a Unity menu item under `Tools/Design System/Toggle Mobile` that flips the class on the active UIDocument's root inside the editor. PRs welcome.
 
 ## Why one class instead of media queries
 

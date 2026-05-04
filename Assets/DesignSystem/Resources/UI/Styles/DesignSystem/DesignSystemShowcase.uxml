@@ -1,73 +1,91 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="DesignSystem.uss"/>
     <ui:ScrollView mode="Vertical" class="ds-root">
+        <ui:VisualElement name="promo-banner" class="showcase-chrome" style="background-color: rgb(0, 0, 0); border-bottom-width: 1px; border-bottom-color: rgb(38, 48, 65); padding-top: 32px; padding-bottom: 32px; padding-left: 24px; padding-right: 24px; align-items: center;">
+            <ui:VisualElement style="max-width: 760px; align-items: center;">
+                <ui:Label text="Unity 6 UI Toolkit Design System" class="ds-h1" style="margin-bottom: 6px; -unity-text-align: middle-center;"/>
+                <ui:Label text="A drop-in design system for UIDocument + UXML + USS. Tokens, components, icons, mobile responsiveness, and a runtime helper — all themed dark, all keyboard-and-touch-ready, all editable from one stylesheet. Free under MIT." class="ds-body-1" style="color: rgb(161, 167, 179); -unity-text-align: middle-center; margin-bottom: 18px; white-space: normal;"/>
+                <ui:Label text="Hover or tap any component below to see its selector chain. Click classes to copy." class="ds-caption" style="color: rgb(103, 112, 133); -unity-text-align: middle-center; margin-bottom: 20px;"/>
+                <ui:VisualElement style="flex-direction: row; flex-wrap: wrap; justify-content: center;">
+                    <ui:Button name="promo-github" text="View on GitHub" class="ds-btn ds-btn--primary" style="margin-right: 8px; margin-bottom: 8px;"/>
+                    <ui:Button name="promo-steam" text="Wishlist Leap of Legends" class="ds-btn ds-btn--secondary" style="margin-bottom: 8px;"/>
+                </ui:VisualElement>
+                <ui:Label text="Built for and battle-tested in Leap of Legends — a multiplayer platform fighter shipping to Steam, App Store, and Google Play." class="ds-caption" style="color: rgb(103, 112, 133); -unity-text-align: middle-center; margin-top: 12px; white-space: normal;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
         <ui:VisualElement style="flex-direction: row; flex-wrap: wrap; padding: 12px;">
             <ui:VisualElement class="ds-section" style="width: 240px;">
-                <ui:Label text="COLORS" class="ds-section__title"/>
+                <ui:VisualElement style="flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <ui:Label text="COLORS" class="ds-section__title" style="margin-bottom: 0;"/>
+                    <ui:VisualElement style="flex-direction: row; align-items: center;">
+                        <ui:VisualElement class="ds-icon ds-icon--xs ds-icon--sun" style="margin-right: 6px;"/>
+                        <ui:Toggle name="theme-toggle" class="ds-toggle"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
                 <ui:VisualElement class="ds-swatch-row">
-                    <ui:VisualElement class="ds-swatch" style="background-color: rgb(34, 197, 94);"/>
+                    <ui:VisualElement class="ds-swatch ds-swatch--primary"/>
                     <ui:Label text="Primary" class="ds-swatch__name"/>
-                    <ui:Label text="#22C55E" class="ds-swatch__hex"/>
+                    <ui:Label name="hex-primary" text="#22C55E" class="ds-swatch__hex"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-swatch-row">
-                    <ui:VisualElement class="ds-swatch" style="background-color: rgb(22, 163, 74);"/>
+                    <ui:VisualElement class="ds-swatch ds-swatch--primary-hover"/>
                     <ui:Label text="Primary Hover" class="ds-swatch__name"/>
-                    <ui:Label text="#16A34A" class="ds-swatch__hex"/>
+                    <ui:Label name="hex-primary-hover" text="#16A34A" class="ds-swatch__hex"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-swatch-row">
-                    <ui:VisualElement class="ds-swatch" style="background-color: rgb(59, 130, 246);"/>
+                    <ui:VisualElement class="ds-swatch ds-swatch--secondary"/>
                     <ui:Label text="Secondary" class="ds-swatch__name"/>
-                    <ui:Label text="#3B82F6" class="ds-swatch__hex"/>
+                    <ui:Label name="hex-secondary" text="#3B82F6" class="ds-swatch__hex"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-swatch-row">
-                    <ui:VisualElement class="ds-swatch" style="background-color: rgb(168, 85, 247);"/>
+                    <ui:VisualElement class="ds-swatch ds-swatch--tertiary"/>
                     <ui:Label text="Tertiary" class="ds-swatch__name"/>
-                    <ui:Label text="#A855F7" class="ds-swatch__hex"/>
+                    <ui:Label name="hex-tertiary" text="#A855F7" class="ds-swatch__hex"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-swatch-row">
-                    <ui:VisualElement class="ds-swatch" style="background-color: rgb(245, 158, 11);"/>
+                    <ui:VisualElement class="ds-swatch ds-swatch--warning"/>
                     <ui:Label text="Warning" class="ds-swatch__name"/>
-                    <ui:Label text="#F59E0B" class="ds-swatch__hex"/>
+                    <ui:Label name="hex-warning" text="#F59E0B" class="ds-swatch__hex"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-swatch-row">
-                    <ui:VisualElement class="ds-swatch" style="background-color: rgb(239, 68, 68);"/>
+                    <ui:VisualElement class="ds-swatch ds-swatch--danger"/>
                     <ui:Label text="Danger" class="ds-swatch__name"/>
-                    <ui:Label text="#EF4444" class="ds-swatch__hex"/>
+                    <ui:Label name="hex-danger" text="#EF4444" class="ds-swatch__hex"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-swatch-row">
-                    <ui:VisualElement class="ds-swatch" style="background-color: rgb(242, 244, 247);"/>
+                    <ui:VisualElement class="ds-swatch ds-swatch--text-primary"/>
                     <ui:Label text="Text Primary" class="ds-swatch__name"/>
-                    <ui:Label text="#F2F4F7" class="ds-swatch__hex"/>
+                    <ui:Label name="hex-text-primary" text="#F2F4F7" class="ds-swatch__hex"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-swatch-row">
-                    <ui:VisualElement class="ds-swatch" style="background-color: rgb(161, 167, 179);"/>
+                    <ui:VisualElement class="ds-swatch ds-swatch--text-secondary"/>
                     <ui:Label text="Text Secondary" class="ds-swatch__name"/>
-                    <ui:Label text="#A1A7B3" class="ds-swatch__hex"/>
+                    <ui:Label name="hex-text-secondary" text="#A1A7B3" class="ds-swatch__hex"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-swatch-row">
-                    <ui:VisualElement class="ds-swatch" style="background-color: rgb(103, 112, 133);"/>
+                    <ui:VisualElement class="ds-swatch ds-swatch--text-disabled"/>
                     <ui:Label text="Text Disabled" class="ds-swatch__name"/>
-                    <ui:Label text="#677085" class="ds-swatch__hex"/>
+                    <ui:Label name="hex-text-disabled" text="#677085" class="ds-swatch__hex"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-swatch-row">
-                    <ui:VisualElement class="ds-swatch" style="background-color: rgb(11, 15, 23);"/>
+                    <ui:VisualElement class="ds-swatch ds-swatch--bg"/>
                     <ui:Label text="Background" class="ds-swatch__name"/>
-                    <ui:Label text="#0B0F17" class="ds-swatch__hex"/>
+                    <ui:Label name="hex-bg" text="#0B0F17" class="ds-swatch__hex"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-swatch-row">
-                    <ui:VisualElement class="ds-swatch" style="background-color: rgb(19, 26, 36);"/>
+                    <ui:VisualElement class="ds-swatch ds-swatch--surface"/>
                     <ui:Label text="Surface" class="ds-swatch__name"/>
-                    <ui:Label text="#131A24" class="ds-swatch__hex"/>
+                    <ui:Label name="hex-surface" text="#131A24" class="ds-swatch__hex"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-swatch-row">
-                    <ui:VisualElement class="ds-swatch" style="background-color: rgb(26, 35, 48);"/>
+                    <ui:VisualElement class="ds-swatch ds-swatch--surface-elev"/>
                     <ui:Label text="Surface Elevated" class="ds-swatch__name"/>
-                    <ui:Label text="#1A2330" class="ds-swatch__hex"/>
+                    <ui:Label name="hex-surface-elev" text="#1A2330" class="ds-swatch__hex"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-swatch-row">
-                    <ui:VisualElement class="ds-swatch" style="background-color: rgb(38, 48, 65);"/>
+                    <ui:VisualElement class="ds-swatch ds-swatch--border"/>
                     <ui:Label text="Border" class="ds-swatch__name"/>
-                    <ui:Label text="#263041" class="ds-swatch__hex"/>
+                    <ui:Label name="hex-border" text="#263041" class="ds-swatch__hex"/>
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement class="ds-section" style="width: 280px;">
@@ -94,35 +112,35 @@
                 <ui:VisualElement class="ds-row">
                     <ui:Label text="Primary" class="ds-body-2" style="width: 70px;"/>
                     <ui:Button text="Default" class="ds-btn ds-btn--primary" style="margin-right: 6px;"/>
-                    <ui:Button text="Hover" class="ds-btn ds-btn--primary" style="margin-right: 6px; background-color: rgb(22, 163, 74);"/>
+                    <ui:Button text="Hover" class="ds-btn ds-btn--primary ds-btn--demo-hover" style="margin-right: 6px;"/>
                     <ui:Button text="Pressed" class="ds-btn ds-btn--primary ds-btn--pressed" style="margin-right: 6px;"/>
                     <ui:Button text="Disabled" enabled="false" class="ds-btn ds-btn--primary" style="margin-right: 6px;"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-row">
                     <ui:Label text="Secondary" class="ds-body-2" style="width: 70px;"/>
                     <ui:Button text="Default" class="ds-btn ds-btn--secondary" style="margin-right: 6px;"/>
-                    <ui:Button text="Hover" class="ds-btn ds-btn--secondary" style="margin-right: 6px; background-color: rgb(37, 99, 235);"/>
+                    <ui:Button text="Hover" class="ds-btn ds-btn--secondary ds-btn--demo-hover" style="margin-right: 6px;"/>
                     <ui:Button text="Pressed" class="ds-btn ds-btn--secondary ds-btn--pressed" style="margin-right: 6px;"/>
                     <ui:Button text="Disabled" enabled="false" class="ds-btn ds-btn--secondary" style="margin-right: 6px;"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-row">
                     <ui:Label text="Tertiary" class="ds-body-2" style="width: 70px;"/>
                     <ui:Button text="Default" class="ds-btn ds-btn--tertiary" style="margin-right: 6px;"/>
-                    <ui:Button text="Hover" class="ds-btn ds-btn--tertiary" style="margin-right: 6px; background-color: rgb(147, 51, 234);"/>
+                    <ui:Button text="Hover" class="ds-btn ds-btn--tertiary ds-btn--demo-hover" style="margin-right: 6px;"/>
                     <ui:Button text="Pressed" class="ds-btn ds-btn--tertiary ds-btn--pressed" style="margin-right: 6px;"/>
                     <ui:Button text="Disabled" enabled="false" class="ds-btn ds-btn--tertiary" style="margin-right: 6px;"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-row">
                     <ui:Label text="Ghost" class="ds-body-2" style="width: 70px;"/>
                     <ui:Button text="Default" class="ds-btn ds-btn--ghost" style="margin-right: 6px;"/>
-                    <ui:Button text="Hover" class="ds-btn ds-btn--ghost" style="margin-right: 6px; background-color: rgb(26, 35, 48);"/>
+                    <ui:Button text="Hover" class="ds-btn ds-btn--ghost ds-btn--demo-hover" style="margin-right: 6px;"/>
                     <ui:Button text="Pressed" class="ds-btn ds-btn--ghost ds-btn--pressed" style="margin-right: 6px;"/>
                     <ui:Button text="Disabled" enabled="false" class="ds-btn ds-btn--ghost" style="margin-right: 6px;"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="ds-row">
                     <ui:Label text="Danger" class="ds-body-2" style="width: 70px;"/>
                     <ui:Button text="Default" class="ds-btn ds-btn--danger" style="margin-right: 6px;"/>
-                    <ui:Button text="Hover" class="ds-btn ds-btn--danger" style="margin-right: 6px; background-color: rgb(220, 38, 38);"/>
+                    <ui:Button text="Hover" class="ds-btn ds-btn--danger ds-btn--demo-hover" style="margin-right: 6px;"/>
                     <ui:Button text="Pressed" class="ds-btn ds-btn--danger ds-btn--pressed" style="margin-right: 6px;"/>
                     <ui:Button text="Disabled" enabled="false" class="ds-btn ds-btn--danger" style="margin-right: 6px;"/>
                 </ui:VisualElement>
@@ -908,7 +926,7 @@
                     <ui:Button text="+" class="ds-stepper__btn"/>
                 </ui:VisualElement>
             </ui:VisualElement>
-            <ui:VisualElement class="ds-section" style="width: 280px;">
+            <ui:VisualElement class="ds-section" style="width: 320px;">
                 <ui:Label text="PAGINATION" class="ds-section__title"/>
                 <ui:VisualElement class="ds-pagination">
                     <ui:Button class="ds-pagination__btn">
@@ -960,11 +978,75 @@
             <ui:VisualElement class="ds-section" style="width: 200px;">
                 <ui:Label text="AVATAR" class="ds-section__title"/>
                 <ui:VisualElement style="flex-direction: row; align-items: center;">
-                    <ui:VisualElement class="ds-avatar ds-avatar--xl" style="margin-right: 8px;"/>
+                    <ui:VisualElement class="ds-avatar ds-avatar--xl" style="margin-right: 8px; background-image: resource('sinanata'); -unity-background-scale-mode: scale-and-crop;"/>
                     <ui:VisualElement style="flex-direction: column;">
-                        <ui:VisualElement class="ds-avatar ds-avatar--md" style="margin-bottom: 4px;"/>
-                        <ui:VisualElement class="ds-avatar ds-avatar--sm"/>
+                        <ui:VisualElement class="ds-avatar ds-avatar--md" style="margin-bottom: 4px; background-image: resource('sinanata'); -unity-background-scale-mode: scale-and-crop;"/>
+                        <ui:VisualElement class="ds-avatar ds-avatar--sm" style="background-image: resource('sinanata'); -unity-background-scale-mode: scale-and-crop;"/>
                     </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement class="ds-section" style="width: 320px;">
+                <ui:Label text="SCROLLBARS" class="ds-section__title"/>
+                <ui:VisualElement class="ds-row" style="align-items: flex-start;">
+                    <ui:Label text="Vertical" class="ds-body-2" style="width: 70px; margin-top: 4px;"/>
+                    <ui:ScrollView mode="Vertical" class="ds-scrollbar-demo" style="flex-grow: 1; height: 120px;">
+                        <ui:Label text="Design Tokens" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Typography" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Icons (63)" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Buttons" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Inputs" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Tabs &amp; Filters" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Toggles &amp; Checks" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Sliders" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Progress" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Spinners" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Skeletons" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Modals" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Dialogs" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Drawers" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Toasts" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Bottom Sheets" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Badges" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Tags" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Chips" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Avatars" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Navigation" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Pagination" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Steppers" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Empty States" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Notification Badges" class="ds-body-2" style="margin-bottom: 4px;"/>
+                        <ui:Label text="Scrollbars" class="ds-body-2" style="margin-bottom: 4px;"/>
+                    </ui:ScrollView>
+                </ui:VisualElement>
+                <ui:VisualElement class="ds-row" style="margin-top: 12px; align-items: flex-start;">
+                    <ui:Label text="Horizontal" class="ds-body-2" style="width: 70px; margin-top: 4px;"/>
+                    <ui:ScrollView mode="Horizontal" class="ds-scrollbar-demo" style="flex-grow: 1; height: 56px;">
+                        <ui:VisualElement class="ds-icon ds-icon--paw" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--shirt" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--hats" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--store" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--bag" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--cart" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--gift" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--heart" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--sparkle" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--fire" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--sword" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--shield" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--leaf" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--droplet" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--sun" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--tree" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--mountain" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--home" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--user" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--bell" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--mic" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--settings" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--search" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--lock" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                        <ui:VisualElement class="ds-icon ds-icon--eye" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;"/>
+                    </ui:ScrollView>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

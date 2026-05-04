@@ -171,12 +171,24 @@
     margin-top: -12px;
 }
 
-/* ── Progress ── */
+/* ── Progress ──
+   Same `min-height: 0` story as the desktop rule in Controls.uss — the
+   compound progress-bar element reserves Unity's default 21px until every
+   layer is collapsed. Mobile bumps the visible height to 10px. */
 .mobile .ds-progress {
     height: 10px;
+    min-height: 0;
+    max-height: 10px;
+}
+.mobile .ds-progress .unity-progress-bar__container {
+    height: 10px;
+    min-height: 0;
+    max-height: 10px;
 }
 .mobile .ds-progress .unity-progress-bar__background {
     height: 10px;
+    min-height: 0;
+    max-height: 10px;
     border-radius: 5px;
 }
 .mobile .ds-progress .unity-progress-bar__progress {

@@ -184,7 +184,19 @@
     padding-left: 5px;
     padding-right: 5px;
 }
+/* Unity's <Label> wraps its text in a measured line-box that's taller than
+   the glyph and ships with a 1px default margin. Both push the count off
+   the dot's optical centre — visually ~2px low + ~2px left at this size.
+   Same fix pattern as `.ds-chip > .unity-label`: target the inner label
+   class directly and zero its box, then re-apply text-centering. */
+.ds-notif-dot > .unity-label {
+    margin: 0;
+    padding: 0;
+    -unity-text-align: middle-center;
+}
 .ds-notif-dot__count {
+    margin: 0;
+    padding: 0;
     font-size: 10px;
     -unity-font-style: bold;
     color: var(--color-text-primary);

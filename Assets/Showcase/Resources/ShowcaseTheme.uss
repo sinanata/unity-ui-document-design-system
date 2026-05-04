@@ -1,0 +1,83 @@
+/* ============================================================================
+   SHOWCASE THEME OVERRIDES — loaded after DesignSystem.uss.
+   - Universal transition on color properties so theme swap animates.
+   - `.theme-light` token overrides for the day/night toggle.
+   Apply by adding `theme-light` to `.ds-root`.
+   ============================================================================ */
+
+/* Animate every property that the theme swap can change. Universal selector
+   so every descendant of the showcase root participates in the transition.
+   240 ms is long enough to read the change, short enough not to feel laggy.
+   The same rule lightly slows existing per-component hover transitions
+   from ~120 ms to 240 ms — barely perceptible and the trade-off is a
+   cohesive theme animation across the whole tree. */
+.ds-root,
+.ds-root * {
+    transition-property: background-color, color, border-color, border-top-color, border-right-color, border-bottom-color, border-left-color, -unity-background-image-tint-color, opacity;
+    transition-duration: 240ms;
+    transition-timing-function: ease-in-out;
+}
+
+/* Light theme — token cascade means every descendant component picks up
+   the new values automatically. Brand accents shift slightly darker so
+   they keep contrast on white surfaces; surfaces and text invert. Rarity
+   colors are intentionally untouched — brand meaning stays constant. */
+.theme-light {
+    /* Brand */
+    --color-primary:         #16A34A;
+    --color-primary-hover:   #15803D;
+    --color-primary-press:   #14532D;
+    --color-primary-soft:    rgba(22, 163, 74, 0.16);
+
+    --color-secondary:       #2563EB;
+    --color-secondary-hover: #1D4ED8;
+    --color-secondary-press: #1E40AF;
+    --color-secondary-soft:  rgba(37, 99, 235, 0.16);
+
+    --color-tertiary:        #9333EA;
+    --color-tertiary-hover:  #7E22CE;
+    --color-tertiary-press:  #6B21A8;
+    --color-tertiary-soft:   rgba(147, 51, 234, 0.16);
+
+    --color-warning:         #D97706;
+    --color-warning-hover:   #B45309;
+    --color-warning-soft:    rgba(217, 119, 6, 0.16);
+
+    --color-danger:          #DC2626;
+    --color-danger-hover:    #B91C1C;
+    --color-danger-press:    #991B1B;
+    --color-danger-soft:     rgba(220, 38, 38, 0.16);
+
+    /* Text — dark on light */
+    --color-text-primary:    #0F172A;
+    --color-text-secondary:  #475569;
+    --color-text-disabled:   #94A3B8;
+    --color-text-on-accent:  #FFFFFF;
+
+    /* Surfaces — light */
+    --color-bg:              #F8FAFC;
+    --color-surface:         #FFFFFF;
+    --color-surface-elev:    #F1F5F9;
+    --color-surface-hover:   #E2E8F0;
+    --color-border:          #E2E8F0;
+    --color-border-strong:   #CBD5E1;
+    --color-overlay:         rgba(0, 0, 0, 0.5);
+}
+
+/* The notification dot's red background needs light text in both themes.
+   In dark mode `--color-text-primary` is already off-white so the base
+   rule in Badges.uss works. In light mode it inverts to dark slate and
+   becomes unreadable on red — re-route to `--color-text-on-accent`,
+   which the light theme defines as white. */
+.theme-light .ds-notif-dot__count {
+    color: var(--color-text-on-accent);
+}
+
+/* Page chrome (promo banner) stays on a black background regardless of
+   the theme toggle, so the token cascade can't turn the .ds-h1 title
+   dark and unreadable when the user switches to light mode. The banner's
+   own inline rgb sets the background; we just need to lock the title's
+   colour to a fixed light value here. */
+.showcase-chrome .ds-h1 {
+    color: rgb(242, 244, 247);
+}

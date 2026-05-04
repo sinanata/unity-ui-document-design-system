@@ -19,9 +19,9 @@ DesignSystem.uss                 ← master, @imports the layers below
         ├── Cards.uss            ← .ds-animal-card, .ds-info-row, .ds-swatch-row
         ├── Navigation.uss       ← .ds-side-nav, .ds-side-rail, .ds-bottom-nav, .ds-profile
         ├── Badges.uss           ← .ds-badge, .ds-tag, .ds-chip, .ds-avatar, .ds-notif-*
-        ├── Controls.uss         ← .ds-toggle, .ds-check, .ds-radio, .ds-slider, .ds-range
+        ├── Controls.uss         ← .ds-toggle, .ds-check, .ds-radio, .ds-slider, .ds-range, scoped scrollbars
         ├── Overlays.uss         ← .ds-modal, .ds-dialog, .ds-toast, .ds-sheet, .ds-empty
-        ├── Feedback.uss         ← .ds-progress, .ds-spinner, .ds-skeleton, .ds-pagination
+        ├── Feedback.uss         ← .ds-progress, .ds-spinner, .ds-skeleton, .ds-pagination, showcase helpers
         └── Mobile.uss           ← .mobile-prefixed overrides — loaded LAST
 ```
 
@@ -57,6 +57,71 @@ To re-theme: override `:root` in a higher-priority stylesheet attached after the
 ```
 
 No need to touch `Buttons.uss` or any other file. The cascade re-paints automatically.
+
+To switch themes at runtime, scope the overrides under a class instead of `:root` and toggle the class on `.ds-root`:
+
+```css
+/* In a stylesheet loaded after DesignSystem.uss */
+.theme-light {
+    --color-primary:        #16A34A;
+    --color-bg:             #F8FAFC;
+    --color-surface:        #FFFFFF;
+    --color-text-primary:   #0F172A;
+    --color-text-secondary: #475569;
+    /* ...the rest of the token set... */
+}
+```
+
+```csharp
+// Toggle from any handler
+toggle.RegisterValueChangedCallback(evt => {
+    if (evt.newValue) root.AddToClassList("theme-light");
+    else              root.RemoveFromClassList("theme-light");
+});
+```
+
+The whole tree picks up the new values via the var() cascade. To make the swap animate (it's instant by default — children don't inherit transitions), pair the override with a universal transition rule:
+
+```css
+.ds-root,
+.ds-root * {
+    transition-property: background-color, color, border-color, border-top-color, border-right-color, border-bottom-color, border-left-color, -unity-background-image-tint-color;
+    transition-duration: 240ms;
+    transition-timing-function: ease-in-out;
+}
+```
+
+This is exactly how the showcase's day / night toggle works — see `Assets/Showcase/Resources/ShowcaseTheme.uss` for the reference implementation.
+
+### Themes that need to override colour-on-coloured-background
+
+Some elements have a coloured background that doesn't change when the theme flips, but their text colour does. The notification dot is the canonical example: `.ds-notif-dot` is always red (the danger token), but `.ds-notif-dot__count` uses `var(--color-text-primary)` which inverts to dark slate under a light theme — black text on red. Re-route in your theme override:
+
+```css
+.theme-light .ds-notif-dot__count {
+    color: var(--color-text-on-accent);   /* white in the light theme */
+}
+```
+
+Same pattern applies to any "always-coloured surface, theme-aware text" pair.
+
+### Inline `var(...)` in UXML — DON'T
+
+Unity 6's clone-time `StyleVariableResolver` NREs when it encounters `var(...)` inside a UXML `style="..."` attribute. The crash surfaces as "The UXML file set for the UIDocument could not be cloned." Author colour and dimension overrides as USS classes:
+
+```xml
+<!-- WRONG — crashes Unity 6 on clone -->
+<ui:VisualElement style="background-color: var(--color-surface);" />
+
+<!-- RIGHT — class drives the var() resolution at USS parse time -->
+<ui:VisualElement class="ds-card-surface" />
+```
+
+```css
+.ds-card-surface { background-color: var(--color-surface); }
+```
+
+Inline `var(...)` works fine inside USS files themselves — it's only the inline UXML attribute that breaks.
 
 ### Per-axis radius tokens
 
@@ -206,3 +271,106 @@ If a new component family doesn't fit `Cards.uss` or `Overlays.uss`:
 4. Add `.mobile` overrides for the new family in `Mobile.uss`.
 
 The `@import` order is the single source of truth for cascade. Don't try to control order via specificity tricks; let the import sequence carry it.
+
+## Scrollbar styling
+
+Unity's UI Toolkit ScrollView is a compound element with internal classes outside the `.ds-` namespace. The system styles them in `Controls.uss`, scoped to `.ds-root` so the rules don't leak into editor windows or other UI Toolkit panels in the same project:
+
+```css
+.ds-root .unity-scroller__low-button,
+.ds-root .unity-scroller__high-button { display: none; }
+
+.ds-root .unity-scroll-view__vertical-scroller   { width: 8px; }
+.ds-root .unity-scroll-view__horizontal-scroller { height: 8px; }
+
+.ds-root .unity-base-slider__tracker {
+    background-color: transparent;
+    border-width: 0;
+}
+
+.ds-root .unity-base-slider__dragger {
+    background-color: var(--color-border-strong);
+    border-radius: 4px;
+    border-width: 0;
+    transition-property: background-color;
+    transition-duration: var(--transition-fast);
+}
+
+.ds-root .unity-base-slider__dragger:hover {
+    background-color: var(--color-text-secondary);
+}
+```
+
+Both axes share the same thumb pattern. The thumb auto-themes through `--color-border-strong` and `--color-text-secondary`, so a theme override repaints the scrollbar with no extra rules.
+
+Why scoped to `.ds-root` instead of the universal `.unity-base-slider__dragger`? The same internal classes are used by Unity's editor windows, the Inspector, the UI Builder, and any other UI Toolkit panel in the project. A naked `.unity-base-slider__dragger { … }` rule would re-skin every scrollbar in every editor tool — not what consumers want when dropping the design system into an existing project.
+
+## The showcase host project
+
+The repo doubles as a **host Unity project** that builds the live web demo. The host pieces are deliberately separated from the drop-in design system folder so consumers can copy `Assets/DesignSystem/` into their own project and leave the host behind:
+
+```
+Assets/
+├── DesignSystem/                ← drop-in design system (copy this into your project)
+├── Showcase/                    ← host scene + supporting scripts (host-only)
+│   ├── Showcase.unity
+│   ├── Resources/
+│   │   ├── ShowcaseTheme.uss    ← .theme-light token override + universal transition
+│   │   ├── UnityDefaultRuntimeTheme.tss
+│   │   └── sinanata.jpg         ← profile photo for the AVATAR section
+│   └── Runtime/
+│       ├── ShowcaseBootstrap.cs
+│       └── ShowcaseDocOverlay.cs
+├── Editor/BuildCli.cs           ← Unity batchmode entry for WebGL builds
+└── WebGLTemplates/ShowcaseTemplate/
+    └── index.html               ← custom template (touch-action, viewport-fit, dark loading bar)
+```
+
+### `ShowcaseBootstrap.cs`
+
+`[RuntimeInitializeOnLoadMethod(AfterSceneLoad)]` static method that runs once per Play / build start. It:
+
+1. Loads the showcase UXML and the default Unity TSS via `Resources.Load`.
+2. Creates two GameObjects, each with a `UIDocument`. Their `PanelSettings` are also created in code (`scaleMode = ConstantPixelSize`, `themeStyleSheet = UnityDefaultRuntimeTheme`, sortingOrder 0 for the showcase doc, 1 for the doc-overlay) — no `.asset` files to maintain.
+3. Loads the showcase-only `ShowcaseTheme.uss` via `Resources.Load<StyleSheet>` and adds it to the showcase root's `styleSheets` list. Loaded *after* the design system stylesheet (which the UXML imports first) so its rules win specificity ties.
+4. Wires the day / night toggle, the GitHub / Steam promo links (`Application.OpenURL`), and adds `.mobile` to the showcase root when `Screen.width < 768`.
+5. Calls `DesignSystemRuntime.AttachToAllUIDocuments()` so the spinner / knob / shimmer runtime catches the bootstrap-created documents — `SceneManager.sceneLoaded` fires before our `AfterSceneLoad` init in some Unity versions.
+
+### `ShowcaseDocOverlay.cs`
+
+A `MonoBehaviour` attached to the second UIDocument (the higher-`sortingOrder` one). It builds an inspection panel programmatically (no UXML) and listens for `PointerMoveEvent` / `PointerDownEvent` on the showcase root.
+
+When the cursor moves:
+
+1. Walk up `evt.target.parent` chain.
+2. Stop on the first element that carries a `ds-*` class which is **not** in the container excludelist (`ds-section`, `ds-row`, `ds-swatch-row`, `ds-section__title`, `ds-root`).
+3. Also short-circuit if any ancestor carries `.showcase-chrome` — that's the promo banner, which uses real ds-* classes for visual consistency but isn't a component the visitor came to inspect.
+4. Render the chain in a floating panel anchored next to the leaf (or full-bottom on mobile). Click the panel to pin / unpin. Click the leaf-classes line to copy the class list via `GUIUtility.systemCopyBuffer`.
+5. If the cursor sits on only-containers (or chrome) for 2 s, fade the panel + outline highlight via inline `transition-property: opacity` (240 ms ease-out) and remove them from the picking tree until the cursor returns to a real component.
+
+The overlay's root is `pickingMode = Ignore` so showcase events still reach the showcase document below; only the inspection panel itself is `pickingMode = Position` to capture pin / copy clicks.
+
+### `ShowcaseTheme.uss`
+
+Three things, all showcase-only:
+
+1. A universal opacity / colour transition rule on `.ds-root, .ds-root *` so theme swaps animate.
+2. A `.theme-light` block that redefines every colour token from `DesignTokens.uss`.
+3. Targeted overrides like `.theme-light .ds-notif-dot__count { color: var(--color-text-on-accent); }` for elements whose colour-on-coloured-background pairing breaks under a naive theme swap.
+
+This file is loaded only by the showcase bootstrap. Consumers copying `Assets/DesignSystem/` into their own project don't get it — they author their own theme overrides scoped to their own classes.
+
+### WebGL build pipeline
+
+The host project builds with `Tools/Build/Build-Showcase.ps1` — a Windows-only PowerShell orchestrator that mirrors the production-tested Leap of Legends `Build-All.ps1` pattern:
+
+- Preflight (Unity exe found, stale `Temp/UnityLockfile` removed).
+- Optional cache clear (`-ClearCache` for stale-Burst recovery).
+- Unity batchmode invocation with live progress display from `DisplayProgressbar:` log markers.
+- JSON build report (`-cliReportPath` flag honoured by `Assets/Editor/BuildCli.cs::BuildWebGL`) so the orchestrator validates success without scraping the log.
+- Unity process-tree cleanup on Ctrl+C / error so orphan AssetImportWorkers don't keep `Temp/UnityLockfile` held.
+- Burst-AOT cache auto-retry on the specific `bcl.exe exit 3 + empty stderr` pattern.
+- Native NTSTATUS crash-code labels (`STATUS_ACCESS_VIOLATION` etc.) when Unity crashes below the C# layer.
+- Optional `-Serve` (local HTTP server) and `-Deploy` (single-commit force-push to `gh-pages` via `git worktree`).
+
+Full docs in [`Tools/Build/README.md`](../Tools/Build/README.md).

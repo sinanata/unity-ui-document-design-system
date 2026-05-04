@@ -158,7 +158,7 @@ Set placeholders via `field.textEdition.placeholder = "..."` in C#. Unity 6's AP
 
 | Class | Use |
 | --- | --- |
-| `.ds-spinner` | Loader; pair with `.is-spinning` to start the rotation. |
+| `.ds-spinner` | Loader; pair with `.is-spinning` to start the rotation. The runtime drives the rotation in C#; do **not** add `transition-property: rotate` — it would compound across per-frame writes and make the spinner jiggle. |
 | `.ds-spinner--lg` | 48 × 48 variant. |
 | `.ds-skeleton` | Placeholder shape. |
 | `.ds-skeleton--card` | Card-shaped variant. |
@@ -169,6 +169,28 @@ Set placeholders via `field.textEdition.placeholder = "..."` in C#. Unity 6's AP
 | `.ds-stepper` | Quantity selector container. |
 | `.ds-stepper__btn` | − / + button. |
 | `.ds-stepper__value` | Value display. |
+
+## Scrollbars
+
+The system styles UI Toolkit's internal scroll classes, **scoped to `.ds-root`** so the rules don't bleed into editor windows or other UI Toolkit panels. You don't write a class — any `<ui:ScrollView>` inside a `.ds-root`-rooted hierarchy gets the slim themed scrollbar automatically.
+
+| Class | Use |
+| --- | --- |
+| `.unity-scroller__low-button`, `.unity-scroller__high-button` | Hidden via `display: none` — no arrow buttons. |
+| `.unity-scroll-view__vertical-scroller` | 8 px wide. |
+| `.unity-scroll-view__horizontal-scroller` | 8 px tall. |
+| `.unity-base-slider__tracker` | Transparent — thumb floats on the page surface. |
+| `.unity-base-slider__dragger` | The visible thumb. 4 px radius pill, `var(--color-border-strong)` background, brightens to `var(--color-text-secondary)` on hover. Auto-themes through tokens. |
+
+To render a framed scroll-view demo (used in the showcase's SCROLLBARS section):
+
+```xml
+<ui:ScrollView mode="Vertical" class="ds-scrollbar-demo" style="height: 120px; flex-grow: 1;">
+    <ui:Label text="..." class="ds-body-2" />
+</ui:ScrollView>
+```
+
+The `.ds-scrollbar-demo` class adds a `var(--color-bg)` background, `var(--color-border)` outline, and 8 px padding — useful for surfacing the scrollbar visually in documentation contexts. Lives in `Feedback.uss`.
 
 ## Icons
 
@@ -209,3 +231,22 @@ Tint variants: `--primary` (text-primary), `--secondary` (text-secondary), `--di
 | `.ds-caption` | 11 px / medium / text-secondary |
 | `.ds-text-success` | Helper colour utility (primary green). |
 | `.ds-text-primary` | Helper colour utility (text-primary white). |
+
+## Showcase helpers
+
+These classes exist for the showcase / live demo and aren't part of the drop-in design system per se — but they're useful patterns for anyone building a similar style guide on top of the system. All live in `Feedback.uss` so they ship in the same import chain.
+
+| Class | Use |
+| --- | --- |
+| `.ds-section` | Bordered section card (background, border, radius, padding) used to group related component demos in the showcase. |
+| `.ds-section__title` | Uppercase / bold / spaced label inside `.ds-section`. |
+| `.ds-row` | Flex-row helper with `align-items: center` — used inside sections to lay out controls in a line. |
+| `.ds-row__gap > *` | Adds `margin-right: var(--space-2)` to direct children — useful for spaced rows. |
+| `.ds-col-gap > *` | Adds `margin-bottom: var(--space-2)` — same pattern, vertical. |
+| `.ds-swatch-row` | Flex-row containing a swatch + name + hex label. |
+| `.ds-swatch` | 14 × 14 colour chip used in the COLORS section. Border uses `var(--color-border)` so it themes correctly. |
+| `.ds-swatch__name`, `.ds-swatch__hex` | Slots inside a swatch row. |
+| `.ds-swatch--<token>` | One per colour token: `--primary`, `--primary-hover`, `--secondary`, `--tertiary`, `--warning`, `--danger`, `--text-primary`, `--text-secondary`, `--text-disabled`, `--bg`, `--surface`, `--surface-elev`, `--border`. Each binds the swatch's background to its `var(--color-*)`, so a theme override repaints the COLORS section automatically. |
+| `.ds-btn--demo-hover` | Combine with a button variant (e.g. `class="ds-btn ds-btn--primary ds-btn--demo-hover"`) to lock the button to its `*-hover` token. Used in the showcase's BUTTONS section to display Default / Hover / Pressed / Disabled side-by-side without needing the cursor to actually be over the button. |
+| `.ds-scrollbar-demo` | Framed `<ui:ScrollView>` wrapper — adds `var(--color-bg)` background, `var(--color-border)` outline, and 8 px padding. Used in the showcase's SCROLLBARS section. |
+| `.showcase-chrome` | Marks an element (and all its descendants) as showcase page chrome — promo banner, future headers / footers. The selector-chain hover overlay (`ShowcaseDocOverlay.cs`) skips inspection inside `.showcase-chrome`. The `.ds-h1` colour is locked to a fixed light value under `.showcase-chrome` regardless of theme so titles stay readable on the always-black banner. |

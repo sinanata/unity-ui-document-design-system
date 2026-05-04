@@ -93,7 +93,14 @@
     -unity-font-style: bold;
 }
 
-/* ---------- Spinner (USS-driven rotation) ---------- */
+/* ---------- Spinner (C#-driven rotation) ----------
+   Rotation is driven from DesignSystemRuntime.StartSpinners, which ticks
+   `el.style.rotate` every 16 ms on every element carrying `is-spinning`.
+   We deliberately do NOT pair this with `transition-property: rotate` —
+   when the runtime writes a new angle each frame, an active transition
+   tries to ease between consecutive values and the spinner visibly
+   jiggles instead of rotating cleanly. The `is-spinning` class is a
+   pure behaviour marker for the runtime; no USS rule animates it. */
 .ds-spinner {
     width: 32px;
     height: 32px;
@@ -103,17 +110,7 @@
     border-right-color: var(--color-surface-elev);
     border-bottom-color: var(--color-surface-elev);
     border-left-color: var(--color-surface-elev);
-    /* Drive rotation in C# via schedule.Execute(...).Every(16) updating .style.rotate
-       OR via USS keyframe-less hack: use transition + repeating value swap.
-       Unity 6 supports: */
-    rotate: 0deg;
-    transition-property: rotate;
-    transition-duration: 800ms;
-    transition-timing-function: linear;
 }
-
-/* USS animation helper class — toggle via C# every 800ms to drive rotation. */
-.ds-spinner.is-spinning { rotate: 360deg; }
 
 .ds-spinner--lg { width: 48px; height: 48px; border-width: 4px; border-radius: var(--radius-pill-24); }
 
@@ -196,7 +193,7 @@
     border-radius: var(--radius-pill-7); /* 14×14 → circle */
     margin-right: var(--space-2);
     border-width: var(--border-thin);
-    border-color: rgba(255,255,255,0.08);
+    border-color: var(--color-border);
 }
 .ds-swatch__name {
     flex-grow: 1;
@@ -206,4 +203,44 @@
 .ds-swatch__hex {
     color: var(--color-text-secondary);
     font-size: var(--font-size-body-2);
+}
+
+/* Showcase swatch variants — each maps to a colour token so the COLORS
+   section auto-updates when a theme override (e.g. `.theme-light`)
+   redefines the tokens. Pure styling helpers; safe to ignore in
+   production code. */
+.ds-swatch--primary        { background-color: var(--color-primary); }
+.ds-swatch--primary-hover  { background-color: var(--color-primary-hover); }
+.ds-swatch--secondary      { background-color: var(--color-secondary); }
+.ds-swatch--tertiary       { background-color: var(--color-tertiary); }
+.ds-swatch--warning        { background-color: var(--color-warning); }
+.ds-swatch--danger         { background-color: var(--color-danger); }
+.ds-swatch--text-primary   { background-color: var(--color-text-primary); }
+.ds-swatch--text-secondary { background-color: var(--color-text-secondary); }
+.ds-swatch--text-disabled  { background-color: var(--color-text-disabled); }
+.ds-swatch--bg             { background-color: var(--color-bg); }
+.ds-swatch--surface        { background-color: var(--color-surface); }
+.ds-swatch--surface-elev   { background-color: var(--color-surface-elev); }
+.ds-swatch--border         { background-color: var(--color-border); }
+
+/* Showcase "force a state" helpers — let one row demonstrate
+   Default / Hover / Pressed / Disabled side-by-side without needing the
+   user to actually hover with the cursor. Each binds to the appropriate
+   token so the demo recolours under theme overrides. */
+.ds-btn--demo-hover.ds-btn--primary    { background-color: var(--color-primary-hover); }
+.ds-btn--demo-hover.ds-btn--secondary  { background-color: var(--color-secondary-hover); }
+.ds-btn--demo-hover.ds-btn--tertiary   { background-color: var(--color-tertiary-hover); }
+.ds-btn--demo-hover.ds-btn--ghost      { background-color: var(--color-surface-elev); }
+.ds-btn--demo-hover.ds-btn--danger     { background-color: var(--color-danger-hover); }
+
+/* Framed ScrollView used by the SCROLLBARS section to give the demo
+   scrollers a visible track. Class form (not inline `var()` in UXML)
+   because Unity 6's inline style parser NREs when it tries to resolve
+   `var(...)` during VisualTreeAsset clone. */
+.ds-scrollbar-demo {
+    background-color: var(--color-bg);
+    border-radius: var(--radius-md);
+    border-width: var(--border-thin);
+    border-color: var(--color-border);
+    padding: 8px;
 }

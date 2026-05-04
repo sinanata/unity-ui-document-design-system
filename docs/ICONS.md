@@ -162,13 +162,15 @@ Sample Count: 4 (anti-aliasing)
 Keep Texture Aspect Ratio: ✓
 ```
 
-These are the defaults for Unity's `com.unity.vectorgraphics` package when you select **Texture**. If your icon renders blocky or corner-clipped, double-check:
+These are the defaults applied by Unity 6's **built-in** SVG `ScriptedImporter` (`fileID: 12408` inside the engine itself). The standalone `com.unity.vectorgraphics` *package* is **not** required — the built-in `com.unity.modules.vectorgraphics: 1.0.0` module ships with every Unity 6 install and includes the importer.
+
+If your icon renders blocky or corner-clipped, double-check:
 
 - `keepTextureAspectRatio: 1`
 - `textureSize: 256`
 - `sampleCount: 4`
 
-The `.svg.meta` files shipped in this repo already carry these; if you import a fresh SVG, the importer copies its defaults.
+The repo ships pre-built `.svg.meta` files for every icon with the right settings, so they import correctly on first project open. If you import a fresh SVG, Unity uses its own defaults — verify the importer settings in the Inspector match the table above.
 
 ## Why not VectorImage / Sprite?
 

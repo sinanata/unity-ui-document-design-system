@@ -4,6 +4,62 @@ All notable changes to this project will be documented here.
 
 This project loosely follows [Semantic Versioning](https://semver.org/) and uses the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
+## [1.1.0] — 2026-05-04
+
+The repo is now both a drop-in design-system folder AND a buildable Unity project. Open it directly in Unity Hub, or copy `Assets/DesignSystem/` into your existing project as before. New live web demo at https://sinanata.github.io/unity-ui-document-design-system/ with hover-to-inspect selector chains, day / night theme toggle, and a slim styled scrollbar throughout.
+
+### Added
+
+- **Live web showcase** at `https://sinanata.github.io/unity-ui-document-design-system/`. Unity 6 WebGL build of `DesignSystemShowcase.uxml` with a custom WebGL template (`viewport-fit: cover`, `touch-action: none`, full-bleed canvas, dark loading bar) for desktop + mobile interactivity.
+- **`Tools/Build/`** — local-only Windows build pipeline. No cloud, no Unity license secret.
+    - `Build-Showcase.ps1` — orchestrator. `-Serve` runs a local HTTP server on the build output; `-Deploy` force-pushes to a `gh-pages` orphan branch via `git worktree`. Mirrors the production-tested Leap of Legends `Build-All.ps1` pattern: Unity process-tree cleanup on Ctrl+C, stale `Temp/UnityLockfile` removal, live phase progress from `DisplayProgressbar:` log markers, JSON build report, Burst-cache auto-retry, native NTSTATUS crash labels.
+    - `Deploy-GhPages.ps1` — single-commit force-push to `gh-pages` via detached `git worktree`. The branch always contains exactly one commit, so the public repo doesn't accumulate ~10 MB build artefacts per deploy.
+    - `config.local.json` (gitignored) for the Unity editor path and deploy target.
+- **`Assets/Editor/BuildCli.cs`** — Unity batchmode entry (`UIDocumentDesignSystem.BuildTools.BuildCli.BuildWebGL`). Asserts `compressionFormat = Brotli`, `decompressionFallback = true`, `template = "PROJECT:ShowcaseTemplate"` defensively at build time so a contributor editing the asset by hand can't regress the player config. Writes a JSON report the orchestrator validates without scraping the log.
+- **`Assets/WebGLTemplates/ShowcaseTemplate/`** — custom WebGL template. iOS Safari touch-bouncing is suppressed by `e.preventDefault()` on `touchmove` / `gesturestart`. The dark loading bar matches the design tokens; a footer ribbon links back to leapoflegends.com and the repo.
+- **`Assets/Showcase/`** — host scene + supporting scripts:
+    - `Showcase.unity` — minimal scene; the bootstrap creates UIDocuments at runtime.
+    - `ShowcaseBootstrap.cs` (~110 lines) — `[RuntimeInitializeOnLoadMethod(AfterSceneLoad)]` spawns two GameObjects, each with a `UIDocument` + a `PanelSettings` created in code (`scaleMode = ConstantPixelSize`, `themeStyleSheet = UnityDefaultRuntimeTheme`). Loads the showcase UXML, attaches the showcase-only `ShowcaseTheme.uss`, wires the day / night toggle, the GitHub / Steam promo buttons (`Application.OpenURL`), and adds `.mobile` when `Screen.width < 768`. Calls `DesignSystemRuntime.AttachToAllUIDocuments()` so the spinner / knob / shimmer runtime catches the bootstrap-created documents.
+    - `ShowcaseDocOverlay.cs` (~310 lines) — programmatic selector-chain hover overlay attached to a separate higher-`sortingOrder` UIDocument. Walks up the cursor's element chain, skipping showcase containers (`.ds-section`, `.ds-row`, `.ds-swatch-row`, `.ds-section__title`, `.ds-root`) and page chrome (`.showcase-chrome`). Renders the resolved chain in a floating panel docked next to the inspected leaf (or full-bottom on mobile). Click panel = pin / unpin; click leaf-classes line = copy via `GUIUtility.systemCopyBuffer`. Idle on containers for 2 s triggers a 240 ms ease-out fade-out (inline opacity transition) and removes the panel from the picking tree until the cursor returns to a real component.
+- **Day / night theme toggle.** A `<ui:Toggle name="theme-toggle">` in the COLORS section header drives `.theme-light` on `.ds-root`. Showcase-only `Showcase/Resources/ShowcaseTheme.uss` redefines every colour token under `.theme-light`, plus a universal `.ds-root, .ds-root *` transition (`background-color, color, border-*-color, -unity-background-image-tint-color, opacity`, 240 ms ease-in-out) so every component's colour change animates rather than flips. The bootstrap also rewrites the COLORS section's hex labels (`#22C55E` → `#16A34A` etc.) on toggle to match the active palette.
+- **Promo banner** at the top of the showcase. Title, tagline, hover-instruction, GitHub + Steam buttons (`Application.OpenURL`-wired), LoL credits line. Always-black background regardless of theme; the `.ds-h1` colour is locked to light via `.showcase-chrome .ds-h1` in `ShowcaseTheme.uss`. The whole banner carries `.showcase-chrome` and is excluded from the hover overlay's inspection.
+- **Scrollbar styling** (`Controls.uss`). Slim 8 px scoped to `.ds-root`: thumb is a `4px`-radius pill in `var(--color-border-strong)`, brightens to `var(--color-text-secondary)` on hover. Arrow buttons (`unity-scroller__low-button` / `__high-button`) hidden via `display: none`. Tracker is transparent so the thumb floats on the page surface. Auto-themes through the var() cascade.
+- **Showcase scrollbar demo section** — vertical (component-name list, 26 entries) and horizontal (25 icons) `<ui:ScrollView>` instances using a new `.ds-scrollbar-demo` class for the framed background.
+- **Showcase swatch + button-state helpers** (`Feedback.uss`):
+    - `.ds-swatch--<token>` for each colour token (primary, primary-hover, secondary, tertiary, warning, danger, text-primary, text-secondary, text-disabled, bg, surface, surface-elev, border) — the COLORS section now uses these classes instead of inline `rgb()` so swatches recolour automatically when the theme switches.
+    - `.ds-btn--demo-hover` combined with each variant resolves to `var(--color-<variant>-hover)` so the BUTTONS section's "Hover" demos retheme cleanly. Replaces the previous inline `background-color: rgb(...)` overrides.
+- **`.ds-scrollbar-demo`** (`Feedback.uss`) — framed wrapper for showcase scrollers. Lives in a USS class because Unity 6's clone-time variable resolver NREs when it hits `var(...)` inside an inline `style="..."` attribute.
+- **Profile photo for avatars** — `Assets/Showcase/Resources/sinanata.jpg` (400×400, 25 KB). The AVATAR section paints all three sizes via `background-image: resource('sinanata')`. The `.meta` ships with `textureCompression: 0` (uncompressed), `filterMode: 2` (trilinear, samples between mip levels for clean 400 → 24 downscale), `maxTextureSize: 512`, `forceMaximumCompressionQuality_BC6H_BC7: 1` — Unity's defaults (DXT5 quality 50) leave visible artefacts on skin tones at small UI sizes.
+
+### Changed
+
+- **The repo is now a Unity project too.** Added `Packages/manifest.json`, `ProjectSettings/`, `Assets/Showcase/Showcase.unity`, plus `.svg.meta` files for all 63 icons (preset to `svgType: 3`). Anyone can clone and open in Unity Hub directly. The "drop into existing project" path still works — copy `Assets/DesignSystem/` into your own `Assets/` as before.
+- **`PanelSettings.scaleMode = ConstantPixelSize`** in the showcase. Components render at their declared pixel sizes; the flex-wrap layout reflows naturally on viewport width changes; `.mobile` triggers below 768 px. Previously `ScaleWithScreenSize` would stretch the entire UI to a 1280×720 reference, masking real component dimensions and never triggering the mobile flip.
+- **`-unity-text-align: middle-center`** added on `.ds-notif-dot > .unity-label` (alongside zeroed margin / padding). Same fix pattern as `.ds-chip > .unity-label`. Resolves a long-standing ~2 px offset where Unity's `<Label>` ships a 1 px default margin and a measured line-box taller than the glyph.
+- **`.ds-section { width: 320px }` for PAGINATION** (was 280 px). The pagination row is ~258 px and the section's `padding: var(--space-4)` claimed the difference, causing overflow.
+- **`.ds-swatch` border** now uses `var(--color-border)` instead of `rgba(255,255,255,0.08)`; the previous near-white outline disappeared on light surfaces.
+
+### Fixed
+
+- **Spinner jiggled instead of rotating.** `.ds-spinner` carried `transition-property: rotate; transition-duration: 800ms` while `DesignSystemRuntime.StartSpinners` writes `style.rotate` every 16 ms. The transition tried to ease between consecutive runtime values and compounded into a visible jiggle. Removed the transition; rotation is now driven purely by the runtime.
+- **`.ds-progress` reserved more vertical space than the bar showed.** Unity's stock `.unity-progress-bar` ships with `min-height: 21px`. `height: 8px` was being clamped up by the min-height, so the layout reserved ~13 px more than the visible bar. Added `min-height: 0` + `max-height: 8px` (and `10px` for `.mobile`) to `.ds-progress`, `.unity-progress-bar__container`, and `.unity-progress-bar__background`.
+- **`.ds-notif-dot__count` rendered ~2 px low and ~2 px left** because Unity's `<Label>` defaults to a 1 px margin and asymmetric line-box. Zeroed margin + padding on the count and the inner `.unity-label`; re-applied `-unity-text-align: middle-center`. The light-theme variant re-routes via `.theme-light .ds-notif-dot__count { color: var(--color-text-on-accent); }` because the dot's red background needs light text in both themes — the base rule's `var(--color-text-primary)` would invert to dark slate.
+- **`com.unity.vectorgraphics: 2.0.0` doesn't exist as a stable release.** A previous manifest pinned a non-existent version which blocked Unity from opening the project. Removed the standalone package; Unity 6 ships the SVG `ScriptedImporter` (`fileID: 12408`) inside the engine. The built-in `com.unity.modules.vectorgraphics: 1.0.0` module is sufficient. Every icon now ships with a pre-set `.svg.meta` so first-import settings are correct.
+
+### Documentation
+
+- New `Tools/Build/README.md` — orchestrator usage, prerequisites, defensive checks, troubleshooting.
+- `README.md` — live-demo URL at the top, "What makes this robust" updated with theme toggle and scoped scrollbar bullets, architecture diagram annotated with showcase-only files.
+- `docs/ARCHITECTURE.md` — new sections on the showcase host project (bootstrap, doc-overlay, theme stylesheet), scrollbar scoping, and the var()-not-in-inline-UXML rule.
+- `docs/COMPONENTS.md` — new entries for `.ds-swatch--<token>`, `.ds-btn--demo-hover`, `.ds-scrollbar-demo`, `.showcase-chrome`, and the scoped scrollbar inner classes.
+- `docs/ICONS.md` — clarified that Unity 6's built-in importer is sufficient; no `com.unity.vectorgraphics` package needed.
+- `docs/MOBILE.md` — live mobile preview via `Build-Showcase.ps1 -Serve` + Chrome devtools device emulation.
+
+### Known caveats / what isn't here yet
+
+- **Light theme is showcase-only for now.** `Showcase/Resources/ShowcaseTheme.uss` overrides tokens under `.theme-light` to validate the cascade behaviour, but the design system itself doesn't ship a production-ready `LightTokens.uss` yet.
+- **`var()` in inline UXML styles crashes Unity 6.** `StyleVariableResolver.ResolveVariable` NREs when it encounters `var(...)` inside a `style="..."` attribute during `VisualTreeAsset` clone. The pattern is to author colour and dimension overrides as classes (e.g. `.ds-scrollbar-demo`, `.ds-swatch--primary`) and reserve inline styles for one-off literal values.
+
 ## [1.0.0] — 2026-05-01
 
 Initial open-source release. The design system has been used in production by [Leap of Legends](https://leapoflegends.com) since early 2026; this is the first cut packaged for general consumption.

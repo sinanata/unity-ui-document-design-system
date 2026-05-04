@@ -8,6 +8,7 @@ Thanks for considering a contribution. The design system is small (~1700 lines U
 2. **Tokens, never hex.** Every colour, radius, spacing, motion timing must reference a `var(--…)` from `DesignTokens.uss`. If your design needs a value that doesn't exist as a token, add the token first (one PR), then the rule (next PR).
 3. **Comments answer "why", not "what".** A reader can see a `width: 18px;` declaration. The comment should explain *why 18px and not 16 or 20* — for example "= half of the 36 px button so the icon centres without `align-items: center` on every consumer."
 4. **The showcase is the test suite.** Every new component must appear in `DesignSystemShowcase.uxml` in at least one state. If your rule has hover / pressed / active / disabled / `--variant` modifiers, render each one. PRs that don't update the showcase get bounced.
+5. **No `var(...)` in inline UXML styles.** Unity 6's clone-time `StyleVariableResolver` NREs when it encounters `var(...)` inside a `style="..."` attribute on a UXML element — it crashes the whole `VisualTreeAsset` clone with "The UXML file set for the UIDocument could not be cloned." Author colour and dimension overrides as USS classes (e.g. `.ds-scrollbar-demo`, `.ds-swatch--primary`) and reserve inline styles for one-off literal values. Inside the USS files themselves, `var(...)` works perfectly.
 
 ## Naming convention
 
@@ -61,12 +62,27 @@ When in doubt, here's the routing:
 | Bordered surfaces with content (cards, info rows) | `Cards.uss` |
 | Navigation containers (side / rail / bottom / profile) | `Navigation.uss` |
 | Pills, chips, tags, avatars, notification dots | `Badges.uss` |
-| Toggles, checkboxes, radios, sliders, range, progress | `Controls.uss` |
+| Toggles, checkboxes, radios, sliders, range, progress, **scrollbars** | `Controls.uss` |
 | Modal / dialog / drawer / toast / empty-state | `Overlays.uss` |
-| Pagination, stepper, spinner, skeleton, progress | `Feedback.uss` |
+| Pagination, stepper, spinner, skeleton, **swatch + section helpers** | `Feedback.uss` |
 | Anything `.mobile`-prefixed | `Mobile.uss` |
+| Showcase-only theme overrides (`.theme-light`, universal transitions) | `Assets/Showcase/Resources/ShowcaseTheme.uss` |
 
 If your new rule doesn't fit any file cleanly, you've probably invented a new component family. Make a new file (`<Family>.uss`), add the import to `DesignSystem.uss`, document it in `docs/COMPONENTS.md`.
+
+## Previewing your changes
+
+Two ways, depending on how invasive your change is:
+
+**Editor only.** Open the project in Unity Hub, open `Assets/Showcase/Showcase.unity`, hit Play. The bootstrap loads the showcase and your USS edits are reflected on first frame. Hover any element to see its selector chain.
+
+**WebGL build (matches what visitors see).** From the repo root:
+
+```powershell
+.\Tools\Build\Build-Showcase.ps1 -Serve
+```
+
+Builds the showcase to `build/WebGL/` and serves it at `http://localhost:3000`. First build takes ~5 min (Unity asset reimport); subsequent builds with the Library cache warm take ~2 min. Use Chrome DevTools' device toolbar to verify the `.mobile` flip and the styled scrollbar at narrow widths. See [`Tools/Build/README.md`](Tools/Build/README.md) for the full pipeline.
 
 ## Adding a new icon
 
@@ -93,12 +109,14 @@ If your new rule doesn't fit any file cleanly, you've probably invented a new co
 
 - [ ] Rule uses tokens, no inline hex / px / ms (except where commented as load-bearing).
 - [ ] Showcase UXML updated with all states / variants of the new rule.
+- [ ] No `var(...)` in inline UXML `style="..."` attributes (use a class).
 - [ ] `Mobile.uss` updated if the component has a touch-tier override.
 - [ ] `docs/COMPONENTS.md` line added (or relevant doc updated).
 - [ ] `CHANGELOG.md` entry under the unreleased section.
 - [ ] No `using LeapOfLegends.*` or product-specific imports in C# changes.
 - [ ] No `Resources.Load<Texture2D>` in new C# — icons resolve via USS `resource(...)`.
 - [ ] Tested in the editor with the showcase scene; tested at desktop and `.mobile` widths.
+- [ ] Tested via `Tools\Build\Build-Showcase.ps1 -Serve` and confirmed the rendered WebGL build matches the editor (catches `var()`-in-inline-UXML crashes and mobile-breakpoint regressions).
 
 ## Reporting bugs
 
