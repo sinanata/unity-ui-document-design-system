@@ -1,5 +1,7 @@
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UIElements;
 
 namespace UIDocumentDesignSystem.Showcase
@@ -57,6 +59,8 @@ namespace UIDocumentDesignSystem.Showcase
                 return;
             }
 
+            EnsureInputSystem();
+
             // The PanelSettings need a Theme Style Sheet for default Unity
             // control styling (Label fonts, Button frames, Toggle frames).
             // Without it Unity logs "No Theme Style Sheet set" and most text
@@ -84,6 +88,13 @@ namespace UIDocumentDesignSystem.Showcase
             if (themeOverride != null && showcaseDoc.rootVisualElement != null)
                 showcaseDoc.rootVisualElement.styleSheets.Add(themeOverride);
 
+            // Focus-ring stylesheet — adds `:focus` rules so keyboard / gamepad
+            // users can see which control is selected. Loaded last so it can
+            // override the variant-specific `border-color` set in Buttons.uss.
+            var focusRing = Resources.Load<StyleSheet>("ShowcaseFocusRing");
+            if (focusRing != null && showcaseDoc.rootVisualElement != null)
+                showcaseDoc.rootVisualElement.styleSheets.Add(focusRing);
+
             // Mobile flip + promo-button wiring + theme-toggle wiring —
             // deferred one frame because rootVisualElement isn't built
             // until UIDocument has had its first OnEnable pass.
@@ -93,6 +104,7 @@ namespace UIDocumentDesignSystem.Showcase
                 ApplyMobileClass(root);
                 WirePromoLinks(root);
                 WireThemeToggle(root);
+                SetInitialFocus(root);
 
                 // Re-evaluate the mobile class whenever the panel root resizes
                 // (browser window resize, mobile rotation, devtools toggle).
@@ -168,6 +180,47 @@ namespace UIDocumentDesignSystem.Showcase
             bool mobile = panelWidth < MOBILE_BREAKPOINT;
             if (mobile && !root.ClassListContains("mobile")) root.AddToClassList("mobile");
             if (!mobile && root.ClassListContains("mobile")) root.RemoveFromClassList("mobile");
+        }
+
+        // Spawn the EventSystem + InputSystemUIInputModule that bridges
+        // keyboard / gamepad input into UI Toolkit's NavigationMoveEvent /
+        // NavigationSubmitEvent / NavigationCancelEvent dispatch. Without
+        // this pair, only pointer events reach the panel — D-pad and Tab
+        // keys do nothing.
+        //
+        // No actions are pre-assigned on the module: InputSystemUIInputModule
+        // auto-calls AssignDefaultActions() in OnEnable when none are set
+        // (com.unity.inputsystem 1.18, line 1646), wiring keyboard arrows +
+        // Enter + Escape + gamepad D-pad + leftStick + South / East buttons
+        // to Move / Submit / Cancel out of the box.
+        //
+        // Idempotent: if another scene already created an EventSystem (e.g.
+        // a project that drops the showcase into an existing app), we leave
+        // it alone.
+        static void EnsureInputSystem()
+        {
+            if (EventSystem.current != null) return;
+
+            var go = new GameObject("EventSystem");
+            go.AddComponent<EventSystem>();
+            go.AddComponent<InputSystemUIInputModule>();
+        }
+
+        // First focusable wins on bootstrap — without it, the user has to
+        // press the gamepad / Tab key once before navigation has a starting
+        // point, which makes the showcase feel inert on launch. Theme-toggle
+        // is a good anchor: it's near the top, it's the most semantically
+        // meaningful control, and focusing a Toggle reads cleanly with the
+        // focus ring.
+        static void SetInitialFocus(VisualElement root)
+        {
+            if (root == null) return;
+            // Toggle and Button share VisualElement/Focusable, but C#'s ??
+            // operator can't infer the common base — assign in steps.
+            Focusable anchor = root.Q<Toggle>("theme-toggle");
+            if (anchor == null) anchor = root.Q<Button>("promo-github");
+            if (anchor == null) anchor = root.Query<Button>().First();
+            anchor?.Focus();
         }
 
         // Wire the promo-banner buttons in DesignSystemShowcase.uxml to real
