@@ -254,7 +254,13 @@
 
 /* Chevron — explicit dimensions, color, and right-edge inset.
    Without margin-right here the arrow sits flush to the box's right
-   border because Unity ignores parent padding for this child. */
+   border because Unity ignores parent padding for this child.
+
+   `background-image` overrides Unity's default theme glyph (a 1× PNG that
+   reads soft on Retina/Android-DPR-3 because the panel scale stretches it
+   above its native resolution) with the design-system SVG, which the Vector
+   Graphics package rasterises crisply at the actual rendered size.
+   `scale-to-fit` keeps it square inside the 12-px box. */
 .ds-dropdown .unity-base-popup-field__arrow {
     width: 12px;
     height: 12px;
@@ -262,7 +268,75 @@
     margin-right: 0;
     flex-shrink: 0;
     flex-grow: 0;
+    background-image: resource("Textures/Icons/chevron_down");
+    -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: var(--color-text-secondary);
+}
+
+/* ---------- Dropdown popup (the menu opened on click) ----------
+   Unity's `BasePopupField` opens a `GenericDropdownMenu` and adds it to
+   `panel.visualTree` — i.e. as a SIBLING of our `.ds-root`, not a child.
+   That means class-scoped selectors like `.ds-root .unity-base-dropdown`
+   would never match. Style the unprefixed Unity class names instead so
+   the popup picks up tokens from the panel-level :root cascade.
+
+   For the .theme-light toggle to reach the popup, ShowcaseBootstrap's
+   WireThemeToggle also adds the class to `panel.visualTree` (otherwise
+   the popup stays dark when the rest of the page flips to light). */
+.unity-base-dropdown {
+    background-color: var(--color-surface-elev);
+    border-color: var(--color-border);
+    border-width: var(--border-thin);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    padding: var(--space-1);
+}
+.unity-base-dropdown__container-outer,
+.unity-base-dropdown__container-inner {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+}
+.unity-base-dropdown__item {
+    background-color: rgba(0, 0, 0, 0);
+    color: var(--color-text-primary);
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+    border-radius: var(--radius-sm);
+    min-height: 32px;
+    transition-property: background-color;
+    transition-duration: var(--transition-fast);
+}
+.unity-base-dropdown__item:hover {
+    background-color: var(--color-surface-hover);
+}
+.unity-base-dropdown__item--checked {
+    background-color: var(--color-primary-soft);
+}
+.unity-base-dropdown__item .unity-text-element,
+.unity-base-dropdown__label {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-body-1);
+    -unity-text-align: middle-left;
+}
+
+/* Checkmark on the currently-selected option — same SVG-replaces-PNG
+   trick as the field-arrow above. Unity sets the default theme image
+   which gets soft on HiDPI; we point at our crisp vector check.
+   The `--checked` modifier toggles the image on/off as Unity's default
+   theme does, so unselected items stay blank. */
+.unity-base-dropdown__item-checkmark {
+    width: 14px;
+    height: 14px;
+    margin-right: var(--space-2);
+    flex-shrink: 0;
+    flex-grow: 0;
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--color-primary);
+}
+.unity-base-dropdown__item-checkmark--checked {
+    background-image: resource("Textures/Icons/check");
 }
 
 /* ---------- Textarea ---------- */

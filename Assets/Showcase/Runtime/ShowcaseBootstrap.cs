@@ -262,6 +262,12 @@ namespace UIDocumentDesignSystem.Showcase
         // redefines every colour token under that class, the universal
         // transition rule animates the swap across the whole tree, and the
         // hex labels in the COLORS section are rewritten to match.
+        //
+        // The class is ALSO applied to `panel.visualTree` because Unity's
+        // BasePopupField adds the dropdown popup as a SIBLING of root,
+        // under panel.visualTree. Without the class on that ancestor the
+        // popup never sees the .theme-light token overrides and stays dark
+        // while the rest of the showcase flips to light mode.
         static void WireThemeToggle(VisualElement root)
         {
             if (root == null) return;
@@ -272,6 +278,14 @@ namespace UIDocumentDesignSystem.Showcase
                 bool light = evt.newValue;
                 if (light) root.AddToClassList("theme-light");
                 else       root.RemoveFromClassList("theme-light");
+
+                var panelRoot = root.panel?.visualTree;
+                if (panelRoot != null && panelRoot != root)
+                {
+                    if (light) panelRoot.AddToClassList("theme-light");
+                    else       panelRoot.RemoveFromClassList("theme-light");
+                }
+
                 UpdateHexLabels(root, light);
             });
         }
