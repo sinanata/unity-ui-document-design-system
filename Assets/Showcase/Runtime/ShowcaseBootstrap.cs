@@ -15,6 +15,7 @@ namespace UIDocumentDesignSystem.Showcase
         const string SHOWCASE_RES_PATH = "UI/Styles/DesignSystem/DesignSystemShowcase";
         const string THEME_RES_PATH    = "UnityDefaultRuntimeTheme";
         const int    MOBILE_BREAKPOINT = 768;
+        const string SCENE_NAME = "Showcase";
 
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
@@ -51,6 +52,14 @@ namespace UIDocumentDesignSystem.Showcase
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Initialize()
         {
+            var currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            if (currentScene.name != SCENE_NAME)
+            {
+                Debug.Log($"[ShowcaseBootstrap] Active scene is '{currentScene.name}', but expected '{SCENE_NAME}'. " +
+                                 "ShowcaseBootstrap will not run. Confirm the Showcase scene is added to Build Settings and set as the active scene.");
+                return;
+            }
+
             var showcaseUxml = Resources.Load<VisualTreeAsset>(SHOWCASE_RES_PATH);
             if (showcaseUxml == null)
             {
