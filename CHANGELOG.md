@@ -4,6 +4,12 @@ All notable changes to this project will be documented here.
 
 This project loosely follows [Semantic Versioning](https://semver.org/) and uses the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
+## [Unreleased]
+
+### Fixed
+
+- **Showcase overlay was injecting in all scenes.** Added a simple check in `ShowcaseBootstrap` checking if the current scene name is equal to the Showcase scene name.
+
 ## [1.3.0] — 2026-05-08
 
 Burger panels and drawers ship as a first-class component, in response to [issue #1](https://github.com/sinanata/unity-ui-document-design-system/issues/1). One `.ds-drawer` class with composable direction (`top` / `right` / `bottom` / `left`) and mode (`overlay` / `push`) modifiers covers both transition styles called out in the issue: top-to-down growing-overlay, and left-to-right growing-overlay-with-shrinking-siblings. Auto-hiding scrollbar lands as a one-class `:hover` modifier with a touch-friendly runtime helper. Showcase has four new live demos at the bottom of the page — same URL, refresh to see.

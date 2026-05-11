@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 namespace UIDocumentDesignSystem.Showcase
 {
@@ -52,11 +53,14 @@ namespace UIDocumentDesignSystem.Showcase
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Initialize()
         {
-            var currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            // Skip when the active scene isn't the showcase — protects consumers
+            // who pull Assets/Showcase/ into a multi-scene project from getting
+            // the showcase overlaid on their first scene at app start.
+            var currentScene = SceneManager.GetActiveScene();
             if (currentScene.name != SCENE_NAME)
             {
                 Debug.Log($"[ShowcaseBootstrap] Active scene is '{currentScene.name}', but expected '{SCENE_NAME}'. " +
-                                 "ShowcaseBootstrap will not run. Confirm the Showcase scene is added to Build Settings and set as the active scene.");
+                          "ShowcaseBootstrap will not run. Confirm the Showcase scene is added to Build Settings and set as the active scene.");
                 return;
             }
 
